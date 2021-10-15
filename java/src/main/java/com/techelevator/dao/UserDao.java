@@ -2,6 +2,7 @@ package com.techelevator.dao;
 
 import com.techelevator.model.User;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface UserDao {
@@ -9,6 +10,8 @@ public interface UserDao {
     List<User> findAll();
 
     User getUserById(Long userId);
+
+    User getUserByUsername(Principal principal);
 
     User findByUsername(String username);
 

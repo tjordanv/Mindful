@@ -1,12 +1,22 @@
 <template>
   <div class="home">
-    <h1>Home</h1>
-    <p>You must be authenticated to see this</p>
+    <Home></Home>
   </div>
 </template>
 
 <script>
+import Home from "../components/Home.vue";
+
 export default {
-  name: "home"
+  components: { Home }, 
+  name: "home",
+  data() {
+    return {
+      
+    }
+  },
+  methods: {
+    
+  }
 };
 </script>

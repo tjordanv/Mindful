@@ -20,6 +20,13 @@ export default new Vuex.Store({
   state: {
     token: currentToken || '',
     user: currentUser || {},
+    userInfo: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      username: "",
+    },
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -30,6 +37,13 @@ export default new Vuex.Store({
     SET_USER(state, user) {
       state.user = user;
       localStorage.setItem('user',JSON.stringify(user));
+    },
+    SET_USER_INFO(state, userInfo) {
+      state.userInfo.firstName = userInfo.firstName;
+      state.userInfo.lastName = userInfo.lastName;
+      state.userInfo.email = userInfo.email;
+      state.userInfo.phone = userInfo.phone;
+      state.userInfo.username = userInfo.username;
     },
     LOGOUT(state) {
       localStorage.removeItem('token');

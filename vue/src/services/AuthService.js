@@ -6,6 +6,10 @@ export default {
     return axios.post('/login', user)
   },
 
+  getUserInfo() {
+    return axios.get('/login/userinfo')
+  },
+
   register(user) {
     return axios.post('/register', user)
   }
