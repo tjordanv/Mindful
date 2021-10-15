@@ -63,11 +63,13 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public boolean create(String username, String password, String role) {
+    public boolean create(String firstName, String lastName, String email,
+                          String phone, String username, String password, String role) {
         boolean userCreated = false;
 
         // create user
-        String insertUser = "insert into users (username,password_hash,role) values(?,?,?)";
+        String insertUser = "insert into users (first_name, last_name, email, phone, username ,password_hash, role)" +
+                " values(?,?,?,?,?,?,?)";
         String password_hash = new BCryptPasswordEncoder().encode(password);
         String ssRole = "ROLE_" + role.toUpperCase();
 
@@ -75,9 +77,13 @@ public class JdbcUserDao implements UserDao {
         String id_column = "user_id";
         userCreated = jdbcTemplate.update(con -> {
                     PreparedStatement ps = con.prepareStatement(insertUser, new String[]{id_column});
-                    ps.setString(1, username);
-                    ps.setString(2, password_hash);
-                    ps.setString(3, ssRole);
+                    ps.setString(1, firstName);
+                    ps.setString(2, lastName);
+                    ps.setString(3, email);
+                    ps.setString(4, phone);
+                    ps.setString(5, username);
+                    ps.setString(6, password_hash);
+                    ps.setString(7, ssRole);
                     return ps;
                 }
                 , keyHolder) == 1;
