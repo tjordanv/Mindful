@@ -6,6 +6,9 @@ import Logout from '../views/Logout.vue'
 import Register from '../views/Register.vue'
 import store from '../store/index'
 import Landing from "../views/Landing.vue"
+import Express from "../views/Express.vue"
+import Reflect from "../views/Reflect.vue"
+import Contact from "../views/Contact.vue"
 
 Vue.use(Router)
 
@@ -60,6 +63,30 @@ const router = new Router({
       component: Landing,
       meta: {
         requiresAuth: false
+      }
+    },
+    {
+      path: "/contact",
+      name: "contact",
+      component: Contact,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/express",
+      name: "express",
+      component: Express,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/reflect",
+      name: "reflect",
+      component: Reflect,
+      meta: {
+        requiresAuth: true
       }
     },
   ]
