@@ -1,6 +1,6 @@
 <template>
   <div>
-      reflect
+      goals
   </div>
 </template>
 

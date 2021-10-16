@@ -8,7 +8,7 @@ import store from '../store/index'
 import Landing from "../views/Landing.vue"
 import Express from "../views/Express.vue"
 import Reflect from "../views/Reflect.vue"
-import Contact from "../views/Contact.vue"
+import Goals from "../views/Goals.vue"
 
 Vue.use(Router)
 
@@ -26,7 +26,7 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: Home,
       meta: {
@@ -58,7 +58,7 @@ const router = new Router({
       }
     },
     {
-      path: "/landing",
+      path: "/",
       name: "landing",
       component: Landing,
       meta: {
@@ -66,9 +66,9 @@ const router = new Router({
       }
     },
     {
-      path: "/contact",
-      name: "contact",
-      component: Contact,
+      path: "/goals",
+      name: "goals",
+      component: Goals,
       meta: {
         requiresAuth: true
       }
