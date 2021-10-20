@@ -9,11 +9,12 @@
               <th>Target</th>
               <th>Current Score</th>
           </tr>
-          <tr v-for="goal in goals" v-bind:key="goal.key">
+          <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key" v-on:click="logScore(goal.goalId)">
             <td>{{goal.summary}}</td>
             <td>{{goal.startDate}}</td>
             <td>{{goal.endDate}}</td>
             <td>{{goal.goal}}</td>
+            <td>{{goal.currentScore}}</td>
           </tr>
           </table>
           <button >I dont do anything</button>
@@ -26,24 +27,41 @@
 
 <script>
 import GoalService from "../services/GoalService.js";
+import ScoreService from "../services/ScoreService.js";
 
 export default {
   data() {
     return {
-      goals: []
+      goals: [],
     }
   },
-  created() {
+  beforeCreate() {
     console.log(this.$store.state.userInfo);
     GoalService.getCurrentGoals().then(
       (response) => {
         this.goals = response.data;
         this.goals = this.goals.filter(goal => goal.active === true);
         console.log(this.goals);
+        this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
+          (response) => {
+            let currentScore = 0;
+            response.data.forEach(scores => currentScore += scores.score);
+            goal.currentScore = currentScore;
+            console.log(goal.currentScore);
+          }
+        )
+        )
       });
     
   },
   methods: {
+    logScore(element) {
+      ScoreService.getScoresByGoalId(element).then(
+        (response) => {
+          console.log(response.data);
+        })
+      console.log(this.goals[0].currentScore);  
+    }
   }
 }
 </script>
@@ -64,5 +82,9 @@ table {
   min-height: 600px;
   max-width: 300px;
   border: 2px red solid;
+}
+.goalRow:hover {
+  background-color:cadetblue;
+  cursor: pointer;
 }
 </style>

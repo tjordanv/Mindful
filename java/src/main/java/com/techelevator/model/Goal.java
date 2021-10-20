@@ -13,7 +13,15 @@ public class Goal {
     private Date startDate;
     private Date endDate;
     private boolean active;
+    private int currentScore;
 
+    public int getCurrentScore() {
+        return currentScore;
+    }
+
+    public void setCurrentScore(int currentScore) {
+        this.currentScore = currentScore;
+    }
 
     public Goal() {}
 

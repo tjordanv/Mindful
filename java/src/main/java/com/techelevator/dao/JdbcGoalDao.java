@@ -41,6 +41,7 @@ public class JdbcGoalDao implements GoalDao{
         goal.setStartDate(rowSet.getDate("start_date"));
         goal.setEndDate(rowSet.getDate("end_date"));
         goal.setActive(rowSet.getBoolean("active"));
+        goal.setCurrentScore(0);
         return goal;
     }
 }

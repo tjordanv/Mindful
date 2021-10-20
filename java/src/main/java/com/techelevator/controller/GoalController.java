@@ -21,9 +21,6 @@ public class GoalController {
 
     @GetMapping(value = "/current-goals")
     public List<Goal> getCurrentGoals(Principal principal) {
-        System.out.println("---");
-        System.out.println(principal.getName());
-        System.out.println("----");
         return goalDao.getGoalsByUserId(principal);
     }
 }
