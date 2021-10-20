@@ -66,7 +66,7 @@ public class AuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/login/userinfo", method=RequestMethod.GET)
+    @RequestMapping(value = "/login/user-info", method=RequestMethod.GET)
     public User getUserInfo(Principal principal) {
         User user = userDao.getUserByUsername(principal);
         return user;

@@ -7,7 +7,7 @@ export default {
   },
 
   getUserInfo() {
-    return axios.get('/login/userinfo')
+    return axios.get('/login/user-info')
   },
 
   register(user) {
