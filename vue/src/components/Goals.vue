@@ -17,7 +17,7 @@
             <td>{{goal.currentScore}}</td>
           </tr>
           </table>
-          <button >I dont do anything</button>
+          <router-link :to="{name: 'newGoal'}">New Goal</router-link>
       </div>
       <div class="scoreContainer">
 

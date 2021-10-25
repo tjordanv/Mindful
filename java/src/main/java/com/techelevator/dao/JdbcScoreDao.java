@@ -7,6 +7,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -25,6 +26,11 @@ public class JdbcScoreDao implements ScoreDao{
             scores.add(mapRowToScore(results));
         }
         return scores;
+    }
+
+    @Override
+    public boolean createScore(int goal_id, Date date, int score) {
+        return false;
     }
 
     private Score mapRowToScore(SqlRowSet rowSet) {

@@ -9,6 +9,7 @@ import Landing from "../views/Landing.vue"
 import Express from "../views/Express.vue"
 import Reflect from "../views/Reflect.vue"
 import Goals from "../views/Goals.vue"
+import NewGoal from "../views/NewGoal.vue"
 
 Vue.use(Router)
 
@@ -85,6 +86,14 @@ const router = new Router({
       path: "/reflect",
       name: "reflect",
       component: Reflect,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/new-goal",
+      name:"newGoal",
+      component: NewGoal,
       meta: {
         requiresAuth: true
       }

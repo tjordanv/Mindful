@@ -92,8 +92,12 @@ export default {
         }
     },
     created() {
+        this.$store.commit("SET_CURRENT_DATE");
+        console.log(this.$store.state.currentDate);
+
         AuthService.getUserInfo().then(response => {
               this.$store.commit("SET_USER_INFO", response.data);
+              console.log(response.data);
               console.log(this.$store.state.userInfo);
         })
 

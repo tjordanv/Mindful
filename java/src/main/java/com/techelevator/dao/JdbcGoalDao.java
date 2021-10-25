@@ -7,7 +7,9 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -15,6 +17,8 @@ public class JdbcGoalDao implements GoalDao{
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    private Integer newGoalId = 0;
 
     @Override
     public List<Goal> getGoalsByUserId(Principal principal) {
@@ -27,6 +31,16 @@ public class JdbcGoalDao implements GoalDao{
         }
 
         return goals;
+    }
+
+    @Override
+    public boolean createGoal(Goal goal) {
+        Goal newGoal = new Goal();
+        String sql = "INSERT INTO goals (user_id, summary, description, goal, movement, units, " +
+                "start_date, end_date, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING goal_id";
+        this.newGoalId = jdbcTemplate.queryForObject(sql, Integer.class, goal.getUserId(), goal.getSummary(), goal.getDescription(),
+        goal.getGoal(), goal.getMovement(), goal.getUnits(), goal.getStartDate(), goal.getEndDate(), goal.isActive());
+        return this.newGoalId != 0;
     }
 
     private Goal mapRowToGoal(SqlRowSet rowSet) {

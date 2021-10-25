@@ -6,4 +6,7 @@ export default {
         return axios.get('/current-goals');
       },
 
+    createNewGoal(newGoal) {
+      return axios.post('/new-goal', newGoal);
+    }  
 }

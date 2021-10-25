@@ -26,7 +26,9 @@ export default new Vuex.Store({
       email: "",
       phone: "",
       username: "",
+      userId: "",
     },
+    currentDate: "",
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -38,12 +40,18 @@ export default new Vuex.Store({
       state.user = user;
       localStorage.setItem('user',JSON.stringify(user));
     },
+    SET_CURRENT_DATE(state) {
+      let date = new Date();
+      let today = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+      state.currentDate = today;
+    },
     SET_USER_INFO(state, userInfo) {
       state.userInfo.firstName = userInfo.firstName;
       state.userInfo.lastName = userInfo.lastName;
       state.userInfo.email = userInfo.email;
       state.userInfo.phone = userInfo.phone;
       state.userInfo.username = userInfo.username;
+      state.userInfo.userId = userInfo.id;
     },
     LOGOUT(state) {
       localStorage.removeItem('token');
