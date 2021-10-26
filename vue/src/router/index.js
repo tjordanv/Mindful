@@ -10,6 +10,7 @@ import Express from "../views/Expressions/Express.vue"
 import Reflect from "../views/Reflections/Reflect.vue"
 import Goals from "../views/Goals/Goals.vue"
 import NewGoal from "../views/Goals/NewGoal.vue"
+import GoalDetails from "../views/Goals/GoalDetails.vue"
 
 Vue.use(Router)
 
@@ -94,6 +95,14 @@ const router = new Router({
       path: "/new-goal",
       name:"newGoal",
       component: NewGoal,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: "/goal-details/:goalId",
+      name: "goal-details",
+      component: GoalDetails,
       meta: {
         requiresAuth: true
       }

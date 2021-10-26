@@ -9,7 +9,7 @@
               <th>Target</th>
               <th>Current Score</th>
           </tr>
-          <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key" v-on:click="logScore(goal.goalId)">
+          <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key" v-on:click="goToGoal(goal.goalId)">
             <td>{{goal.summary}}</td>
             <td>{{goal.startDate}}</td>
             <td>{{goal.endDate}}</td>
@@ -42,14 +42,12 @@ export default {
       this.$store.commit("SET_CURRENT_DATE");
     }
     this.currentDate = this.$store.state.currentDate; 
-    console.log(this.currentDate);
 
     // pulling all active or future goals
     GoalService.getCurrentGoals().then(
       (response) => {
         this.goals = response.data;
         this.goals = this.goals.filter(goal => goal.active || goal.endDate >= this.currentDate);
-        console.log(this.goals);
 
         // checking if goals are still active or need to be activated by date
         this.goals.forEach(goal => {
@@ -71,7 +69,6 @@ export default {
             let currentScore = 0;
             response.data.forEach(scores => currentScore += scores.score);
             goal.currentScore = currentScore;
-            console.log(goal.currentScore);
           }
         )
         )
@@ -79,12 +76,8 @@ export default {
     
   },
   methods: {
-    logScore(element) {
-      ScoreService.getScoresByGoalId(element).then(
-        (response) => {
-          console.log(response.data);
-        })
-      console.log(this.goals[0].currentScore);  
+    goToGoal(goalId) {
+      this.$router.push(`/goal-details/${goalId}`)
     },
   }
 }
