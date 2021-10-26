@@ -55,8 +55,8 @@
 </template>
 
 <script>
-import AuthService from "../services/AuthService.js";
-import QuoteService from "../services/QuoteService.js";
+import AuthService from "../../services/AuthService.js";
+import QuoteService from "../../services/QuoteService.js";
 
 export default {
     components: {},

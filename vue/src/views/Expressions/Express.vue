@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Express from "../../components/Express.vue"
+import Express from "../../components/Expressions/Express.vue"
 
 export default {
     components: {

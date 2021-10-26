@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import NewGoal from "../../components/NewGoal.vue";
+import NewGoal from "../../components/Goals/NewGoal.vue";
 
 export default {
     components: { NewGoal },

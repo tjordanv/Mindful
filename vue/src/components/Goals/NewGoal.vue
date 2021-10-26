@@ -11,10 +11,10 @@
         </select>  
         <label for="movement">Movement</label>
         <select name="movement" v-model="newGoal.movement">
-            <option value="totalUp">Total Up</option>
-            <option value="totalDown">Total Down</option>
-            <option value="averageUp">Average Up</option>
-            <option value="averageDown">Average Down</option>
+            <option value="total up">Total Up</option>
+            <option value="total down">Total Down</option>
+            <option value="average up">Average Up</option>
+            <option value="average down">Average Down</option>
         </select> 
          <!--add v-ifs to display the correct goal input field that corresponds with the units  -->
         <input type="number" class="goalCurrency" placeholder="Goal" v-model="newGoal.goal" v-if="newGoal.units === 'dollars'">  
@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import AuthService from "../services/AuthService.js";
-import GoalService from "../services/GoalService.js"
+import AuthService from "../../services/AuthService.js";
+import GoalService from "../../services/GoalService.js"
 
 export default {
     data() {

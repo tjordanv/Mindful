@@ -2,7 +2,7 @@
   <div class="container">
     <router-link :to="{name: 'express'}">Express</router-link>
     <router-link :to="{name: 'reflect'}">Reflect</router-link>
-    <img class="logo" src="../pics/brain-left-vs-right.jpg" alt="">
+    <img class="logo" src="../../pics/brain-left-vs-right.jpg" alt="">
     <router-link :to="{name: 'goals'}">Goals</router-link>
     <router-link :to="{name: 'logout'}">Logout</router-link>
   </div>

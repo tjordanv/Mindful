@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import GoalService from "../services/GoalService.js";
-import ScoreService from "../services/ScoreService.js";
+import GoalService from "../../services/GoalService.js";
+import ScoreService from "../../services/ScoreService.js";
 
 export default {
   data() {
