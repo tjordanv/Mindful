@@ -49,6 +49,18 @@ public class JdbcGoalDao implements GoalDao{
         jdbcTemplate.update(sql, activeStatus, goalId);
     }
 
+    // TODO create a custom exception to use rather than the generic exception
+    @Override
+    public Goal getGoalByGoalId(int goalId) throws Exception {
+        String sql = "SELECT * FROM goals WHERE goal_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, goalId);
+        if (results.next()) {
+            return mapRowToGoal(results);
+        } else {
+            throw new Exception("goal not found");
+        }
+    }
+
     private Goal mapRowToGoal(SqlRowSet rowSet) {
         Goal goal = new Goal();
         goal.setGoalId(rowSet.getInt("goal_id"));

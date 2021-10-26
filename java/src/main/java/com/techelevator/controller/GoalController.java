@@ -35,4 +35,9 @@ public class GoalController {
     public void updateActiveStatus(@PathVariable int goalId, boolean activeStatus) {
         goalDao.updateGoalActiveStatus(goalId, activeStatus);
     }
+
+    @GetMapping(value = "/get-goal/{goalId}")
+    public Goal getGoalByGoalId(@PathVariable int goalId) throws Exception {
+        return goalDao.getGoalByGoalId(goalId);
+    }
 }

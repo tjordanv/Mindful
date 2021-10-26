@@ -10,4 +10,5 @@ public interface GoalDao {
     List<Goal> getGoalsByUserId(Principal principal);
     boolean createGoal(Goal goal);
     void updateGoalActiveStatus(int goalId, boolean activeStatus);
+    Goal getGoalByGoalId(int goalId) throws Exception;
 }
