@@ -31,8 +31,8 @@ public class GoalController {
         goalDao.createGoal(newGoal);
     }
 
-    @PutMapping("/update-active-status/{goalId}")
-    public void updateActiveStatus(@PathVariable int goalId, boolean activeStatus) {
+    @PutMapping("/update-active-status/{goalId}/{activeStatus}")
+    public void updateActiveStatus(@PathVariable int goalId, @PathVariable boolean activeStatus) {
         goalDao.updateGoalActiveStatus(goalId, activeStatus);
     }
 

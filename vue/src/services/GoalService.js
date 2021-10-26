@@ -11,7 +11,7 @@ export default {
     },
     
     updateActiveStatus(goalId, activeStatus) {
-      return axios.put(`/update-active-status/${goalId}`, activeStatus);
+      return axios.put(`/update-active-status/${goalId}/${activeStatus}`);
     },
 
     getGoalByGoalId(goalId) {

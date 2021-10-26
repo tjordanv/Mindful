@@ -54,7 +54,8 @@ export default {
           if (goal.active && goal.endDate < this.currentDate) {
             GoalService.updateActiveStatus(goal.goalId, false);
             goal.active = false;
-          } else if (goal.active == false && goal.startDate <= this.currentDate) {
+          } 
+          else if (goal.active === false && goal.startDate <= this.currentDate) {
             GoalService.updateActiveStatus(goal.goalId, true);
             goal.active = true;
           }
