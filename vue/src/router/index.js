@@ -1,15 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import Logout from '../views/Logout.vue'
-import Register from '../views/Register.vue'
+import Home from '../views/User/Home.vue'
+import Login from '../views/User/Login.vue'
+import Logout from '../views/User/Logout.vue'
+import Register from '../views/User/Register.vue'
 import store from '../store/index'
-import Landing from "../views/Landing.vue"
-import Express from "../views/Express.vue"
-import Reflect from "../views/Reflect.vue"
-import Goals from "../views/Goals.vue"
-import NewGoal from "../views/NewGoal.vue"
+import Landing from "../views/User/Landing.vue"
+import Express from "../views/Expressions/Express.vue"
+import Reflect from "../views/Reflections/Reflect.vue"
+import Goals from "../views/Goals/Goals.vue"
+import NewGoal from "../views/Goals/NewGoal.vue"
 
 Vue.use(Router)
 
