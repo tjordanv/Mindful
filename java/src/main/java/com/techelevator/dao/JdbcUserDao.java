@@ -31,7 +31,6 @@ public class JdbcUserDao implements UserDao {
     @Override
     public User getUserByUsername(Principal principal) {
         String username = principal.getName();
-        System.out.println(username);
         String sql = "SELECT * FROM users WHERE username = ?";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
         if(results.next()) {

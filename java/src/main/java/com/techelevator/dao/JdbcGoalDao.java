@@ -43,6 +43,12 @@ public class JdbcGoalDao implements GoalDao{
         return this.newGoalId != 0;
     }
 
+    @Override
+    public void updateGoalActiveStatus(int goalId, boolean activeStatus) {
+        String sql = "UPDATE goals SET active = ? WHERE goal_id = ?";
+        jdbcTemplate.update(sql, activeStatus, goalId);
+    }
+
     private Goal mapRowToGoal(SqlRowSet rowSet) {
         Goal goal = new Goal();
         goal.setGoalId(rowSet.getInt("goal_id"));

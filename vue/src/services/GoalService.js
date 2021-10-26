@@ -8,5 +8,9 @@ export default {
 
     createNewGoal(newGoal) {
       return axios.post('/new-goal', newGoal);
-    }  
+    },
+    
+    updateActiveStatus(goalId, activeStatus) {
+      return axios.put(`/update-active-status/${goalId}`, activeStatus);
+    }
 }

@@ -30,4 +30,9 @@ public class GoalController {
     public void createGoal(@RequestBody Goal newGoal) {
         goalDao.createGoal(newGoal);
     }
+
+    @PutMapping("/update-active-status/{goalId}")
+    public void updateActiveStatus(@PathVariable int goalId, boolean activeStatus) {
+        goalDao.updateGoalActiveStatus(goalId, activeStatus);
+    }
 }

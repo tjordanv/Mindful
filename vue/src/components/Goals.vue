@@ -33,15 +33,39 @@ export default {
   data() {
     return {
       goals: [],
+      currentDate: "",
     }
   },
-  beforeCreate() {
-    console.log(this.$store.state.userInfo);
+  created() {
+    // setting current date
+    if (this.$store.state.currentDate === "") {
+      this.$store.commit("SET_CURRENT_DATE");
+    }
+    this.currentDate = this.$store.state.currentDate; 
+    console.log(this.currentDate);
+
+    // pulling all active or future goals
     GoalService.getCurrentGoals().then(
       (response) => {
         this.goals = response.data;
-        this.goals = this.goals.filter(goal => goal.active === true);
+        this.goals = this.goals.filter(goal => goal.active || goal.endDate >= this.currentDate);
         console.log(this.goals);
+
+        // checking if goals are still active or need to be activated by date
+        this.goals.forEach(goal => {
+          if (goal.active && goal.endDate < this.currentDate) {
+            GoalService.updateActiveStatus(goal.goalId, false);
+            goal.active = false;
+          } else if (goal.active == false && goal.startDate <= this.currentDate) {
+            GoalService.updateActiveStatus(goal.goalId, true);
+            goal.active = true;
+          }
+        })
+
+        // refilter goals so only active goals remain
+        this.goals = this.goals.filter(goal => goal.active);
+
+        // pulling scores from DB for active goals 
         this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
           (response) => {
             let currentScore = 0;
@@ -61,7 +85,7 @@ export default {
           console.log(response.data);
         })
       console.log(this.goals[0].currentScore);  
-    }
+    },
   }
 }
 </script>
