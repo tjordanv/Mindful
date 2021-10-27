@@ -3,6 +3,11 @@
       <div class="topCenterFlex">
         <h1 class="goalSummary">{{goal.summary}}</h1>
         <h3 class="goalDescription">{{goal.description}}</h3>
+        <div class="buttons">
+            <button>Add New Score</button>
+            <button>Modify Goal</button>
+            <button>Delete Goal</button>
+        </div>
         <h2 class="score">{{currentScore}} / {{goal.goal}}</h2>
         <h2 class="scorePercentage">{{scorePercent}}% Completed</h2>
       </div>
@@ -99,6 +104,11 @@ export default {
 .goalDescription {
     text-align: center;
     border: 2px solid greenyellow;
+}
+.buttons {
+    display: flex;
+    width: 25vw;
+    justify-content: space-around;
 }
 .score {
   

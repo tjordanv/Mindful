@@ -29,6 +29,7 @@ export default new Vuex.Store({
       userId: "",
     },
     currentDate: "",
+    activeGoals: "",
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -44,6 +45,12 @@ export default new Vuex.Store({
       let date = new Date();
       let today = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
       state.currentDate = today;
+    },
+    UPDATE_ACTIVE_GOALS(state, activeGoals) {
+      state.activeGoals = activeGoals;
+    },
+    INCREMENT_ACTIVE_GOALS(state) {
+      state.activeGoals ++;
     },
     SET_USER_INFO(state, userInfo) {
       state.userInfo.firstName = userInfo.firstName;

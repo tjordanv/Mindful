@@ -17,7 +17,7 @@
             <td>{{goal.currentScore}}</td>
           </tr>
           </table>
-          <router-link :to="{name: 'newGoal'}">New Goal</router-link>
+          <router-link :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link>
       </div>
       <div class="scoreContainer">
 
@@ -42,41 +42,47 @@ export default {
       this.$store.commit("SET_CURRENT_DATE");
     }
     this.currentDate = this.$store.state.currentDate; 
-
-    // pulling all active or future goals
-    GoalService.getCurrentGoals().then(
-      (response) => {
-        this.goals = response.data;
-        this.goals = this.goals.filter(goal => goal.active || goal.endDate >= this.currentDate);
-
-        // checking if goals are still active or need to be activated by date
-        this.goals.forEach(goal => {
-          if (goal.active && goal.endDate < this.currentDate) {
-            GoalService.updateActiveStatus(goal.goalId, false);
-            goal.active = false;
-          } 
-          else if (goal.active === false && goal.startDate <= this.currentDate) {
-            GoalService.updateActiveStatus(goal.goalId, true);
-            goal.active = true;
-          }
-        })
-
-        // refilter goals so only active goals remain
-        this.goals = this.goals.filter(goal => goal.active);
-
-        // pulling scores from DB for active goals 
-        this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
-          (response) => {
-            let currentScore = 0;
-            response.data.forEach(scores => currentScore += scores.score);
-            goal.currentScore = currentScore;
-          }
-        )
-        )
-      });
+    this.getAndCheckGoals();
     
   },
+  beforeMount() {
+    this.getAndCheckGoals();
+  },
   methods: {
+    getAndCheckGoals() {
+      // pulling all active or future goals
+      GoalService.getCurrentGoals().then(
+        (response) => {
+          this.goals = response.data;
+          this.goals = this.goals.filter(goal => goal.active || goal.endDate >= this.currentDate);
+
+          // checking if goals are still active or need to be activated by date
+          this.goals.forEach(goal => {
+            if (goal.active && goal.endDate < this.currentDate) {
+              GoalService.updateActiveStatus(goal.goalId, false);
+              goal.active = false;
+            } 
+            else if (goal.active === false && goal.startDate <= this.currentDate) {
+              GoalService.updateActiveStatus(goal.goalId, true);
+              goal.active = true;
+            }
+          })
+
+          // refilter goals so only active goals remain
+          this.goals = this.goals.filter(goal => goal.active);
+          this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
+
+          // pulling scores from DB for active goals 
+          this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
+            (response) => {
+              let currentScore = 0;
+              response.data.forEach(scores => currentScore += scores.score);
+              goal.currentScore = currentScore;
+            }
+          )
+          )
+        });
+    },
     goToGoal(goalId) {
       this.$router.push(`/goal-details/${goalId}`)
     },
