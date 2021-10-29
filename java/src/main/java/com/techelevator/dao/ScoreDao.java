@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ScoreDao {
     List<Score> getScoresByGoalId(int goalId);
-    boolean createScore(int goalId, Date date, int score);
+    void createScore(Score score);
 }

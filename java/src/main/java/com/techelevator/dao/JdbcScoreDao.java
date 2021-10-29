@@ -29,8 +29,14 @@ public class JdbcScoreDao implements ScoreDao{
     }
 
     @Override
-    public boolean createScore(int goal_id, Date date, int score) {
-        return false;
+    public void createScore(Score newScore) {
+        int goalId = newScore.getGoalId();
+        Date date = newScore.getDate();
+        int score = newScore.getScore();
+        String notes = newScore.getNotes();
+
+        String sql = "INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (?, ?, ?, ?)";
+        jdbcTemplate.update(sql, goalId, date, score, notes);
     }
 
     private Score mapRowToScore(SqlRowSet rowSet) {
@@ -39,6 +45,7 @@ public class JdbcScoreDao implements ScoreDao{
         score.setGoalId(rowSet.getInt("goal_id"));
         score.setDate(rowSet.getDate("date"));
         score.setScore(rowSet.getInt("score"));
+        score.setNotes(rowSet.getString("notes"));
         return score;
     }
 }

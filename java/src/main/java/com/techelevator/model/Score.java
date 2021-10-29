@@ -7,7 +7,15 @@ public class Score {
     private int goalId;
     private Date date;
     private int score;
+    private String notes;
 
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 
     public Score() {}
 

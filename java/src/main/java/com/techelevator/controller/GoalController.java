@@ -36,8 +36,18 @@ public class GoalController {
         goalDao.updateGoalActiveStatus(goalId, activeStatus);
     }
 
+    @PutMapping("/update-favorite-status/{goalId}/{favoriteStatus}")
+    public void updateFavoriteStatus(@PathVariable int goalId, @PathVariable boolean favoriteStatus) {
+        goalDao.updateGoalFavoriteStatus(goalId, favoriteStatus);
+    }
+
     @GetMapping(value = "/get-goal/{goalId}")
     public Goal getGoalByGoalId(@PathVariable int goalId) throws Exception {
         return goalDao.getGoalByGoalId(goalId);
+    }
+
+    @GetMapping(value = "/get-and-check-goals")
+    public List<Goal> getAndCheckGoals(Principal principal) {
+        return goalDao.getAndCheckGoal(principal);
     }
 }

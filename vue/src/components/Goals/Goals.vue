@@ -2,25 +2,58 @@
   <div class="container">
       <div class="goalsContainer">
           <table>
-          <tr class="headers">
-              <th>Goal</th>
-              <th>Start Date</th>
-              <th>End Date</th>
-              <th>Target</th>
-              <th>Current Score</th>
-          </tr>
-          <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key" v-on:click="goToGoal(goal.goalId)">
-            <td>{{goal.summary}}</td>
-            <td>{{goal.startDate}}</td>
-            <td>{{goal.endDate}}</td>
-            <td>{{goal.goal}}</td>
-            <td>{{goal.currentScore}}</td>
-          </tr>
+            <thead>
+              <caption>Your Goals</caption>
+              <tr>
+                <th>Goal</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Target</th>
+                <th>Current Score</th>
+                <th>Favorite</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key">
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.summary}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.startDate}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.endDate}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
+                <td class="checkboxCell"><input class="favCheckbox" type="checkbox" 
+                v-model="goal.favorite" v-on:click="favoriteGoal(goal)"></td>
+              </tr>
+            </tbody>
+            <tfoot class="newGoal">
+              <router-link  :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link>
+            </tfoot>
           </table>
-          <router-link :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link>
       </div>
       <div class="scoreContainer">
-
+        <table>
+            <thead>
+              <caption>Add Scores</caption>
+              <tr>
+                <th>Add</th>
+                <th>Date</th>
+                <th>Score</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="scoreRow" v-for="goal in goals" v-bind:key="goal.key">
+                <td><input type="checkbox" v-model="goal.submitScore"></td>
+                <td><input type="date" v-model="goal.scoreDate"></td>
+                <!-- TODO: add condition to assign appropriate input for the score -->
+                <td><input type="number" v-if="goal.units != 'time'" v-model="goal.score">
+                <input type="time" v-if="goal.units == 'time'" v-model="goal.scoreTime" v-on:change="print(goal)"></td>
+                <td><textarea v-model="goal.scoreNotes"></textarea></td>
+              </tr>
+            </tbody>
+            <tfoot class="scoreFooter">
+              <button class="saveButton" v-on:click="saveScores">Save Scores</button>
+            </tfoot>
+          </table>
       </div>
   </div>
 </template>
@@ -34,6 +67,7 @@ export default {
     return {
       goals: [],
       currentDate: "",
+      scores: [],
     }
   },
   created() {
@@ -41,74 +75,212 @@ export default {
     if (this.$store.state.currentDate === "") {
       this.$store.commit("SET_CURRENT_DATE");
     }
+
+    
+
     this.currentDate = this.$store.state.currentDate; 
-    this.getAndCheckGoals();
+
+    GoalService.getAndCheckGoals().then(
+      (response) => {
+        this.goals = response.data
+        this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
+        if (this.$store.state.favoriteGoals === "") {
+          this.$store.commit("UPDATE_FAVORITE_GOALS", this.goals.length);
+          this.goals.forEach(goal => {
+            if (goal.favorite != true) {
+              this.$store.commit("INCREMENT_FAVORITE_GOALS", -1);
+            }
+          })
+        }
+        this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
+          (response) => {
+            let currentScore = 0;
+            response.data.forEach(scores => {
+              if (goal.units != 'time') {
+                currentScore += scores.score;
+                goal.currentScore = currentScore;
+              } else {
+                //let currentTime = "";
+                  if (scores.score < 1000) {
+                    console.log()
+                  }
+            }
+            })
+            if (goal.movement == 'average up' || goal.movement == 'average down') {
+              let tempScore = (goal.currentScore / response.data.length);
+              goal.currentScore = tempScore.toFixed(2);
+            }
+          }
+        )
+        )
+      });
     
   },
   beforeMount() {
-    this.getAndCheckGoals();
+    GoalService.getAndCheckGoals().then(
+      (response) => {
+        this.goals = response.data
+        this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
+        this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
+          (response) => {
+            let currentScore = 0;
+            let currentTime = [0, 0];
+            response.data.forEach(scores => {
+              if (goal.units != 'time') {
+                currentScore += scores.score;
+                goal.currentScore = currentScore;
+              } else {
+                  if (scores.score < 1000) {
+                  let scoreStr =scores.score.toString();
+                  scoreStr = scoreStr.split('');
+                  console.log(scoreStr)
+                  scoreStr = [scoreStr[0], scoreStr[1] + scoreStr[2]]
+                  console.log(scoreStr)
+                  currentTime[0] += Number(scoreStr[0]);
+                  currentTime[1] += Number(scoreStr[1]);
+                  console.log(currentTime);
+                  goal.currentScore = currentTime;
+              }
+            }
+            })
+            if (goal.movement == 'average up' || goal.movement == 'average down') {
+              if (goal.units != 'time') {
+                let tempScore = (goal.currentScore / response.data.length);
+                goal.currentScore = tempScore.toFixed(2);
+              } else {
+                  let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
+                  minutes /= response.data.length;
+                  let amPm = minutes < 720 ? 'AM' : 'PM';
+                  minutes = [Math.trunc(minutes / 60), minutes % 60]
+                  console.log(minutes)
+                  if (minutes[1] < 10) {
+                    minutes[1] = "0" + minutes[1].toString()
+                  }
+                  goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
+                // goal.currentScore = goal.currentScore.forEach(slot => {
+                //   let tempScore = (slot / response.data.length);
+                //   slot = Math.round(tempScore);
+                //   console.log(goal.currentScore)
+                //   console.log(slot)
+                // })
+              }
+            }
+          }
+        )
+        )
+      });
   },
   methods: {
-    getAndCheckGoals() {
-      // pulling all active or future goals
-      GoalService.getCurrentGoals().then(
-        (response) => {
-          this.goals = response.data;
-          this.goals = this.goals.filter(goal => goal.active || goal.endDate >= this.currentDate);
-
-          // checking if goals are still active or need to be activated by date
-          this.goals.forEach(goal => {
-            if (goal.active && goal.endDate < this.currentDate) {
-              GoalService.updateActiveStatus(goal.goalId, false);
-              goal.active = false;
-            } 
-            else if (goal.active === false && goal.startDate <= this.currentDate) {
-              GoalService.updateActiveStatus(goal.goalId, true);
-              goal.active = true;
-            }
-          })
-
-          // refilter goals so only active goals remain
-          this.goals = this.goals.filter(goal => goal.active);
-          this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
-
-          // pulling scores from DB for active goals 
-          this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
-            (response) => {
-              let currentScore = 0;
-              response.data.forEach(scores => currentScore += scores.score);
-              goal.currentScore = currentScore;
-            }
-          )
-          )
-        });
-    },
     goToGoal(goalId) {
       this.$router.push(`/goal-details/${goalId}`)
     },
+    favoriteGoal(goal) {
+      let goals = [];
+      let favStatus = !goal.favorite;
+      if (!favStatus) {
+        this.$store.commit("INCREMENT_FAVORITE_GOALS", -1);
+        GoalService.updateFavoriteStatus(goal.goalId, favStatus);
+      }  else if (favStatus && this.$store.state.favoriteGoals < 3) {
+        this.$store.commit("INCREMENT_FAVORITE_GOALS", 1);
+        GoalService.updateFavoriteStatus(goal.goalId, favStatus);
+      } else {
+        // TODO: place a constrain that limits users to chosing 3 favorite goals.
+          this.goals.forEach(storedGoal => {
+          if (storedGoal.goalId == goal.goalId) {
+            storedGoal.favorite = false;
+            console.log(storedGoal.favorite);
+            console.log(storedGoal);
+          }
+          goals.push(storedGoal);
+          })
+          console.log(this.goals)
+          this.goals = goals;
+      }
+      console.log(goals);
+      console.log(this.$store.state.favoriteGoals);
+    },
+    saveScores() {
+      this.goals.forEach(goal => {
+        if (goal.submitScore) {
+          let newScore = {goalId: goal.goalId, date: goal.scoreDate, score: goal.score, notes: goal.scoreNotes};
+          ScoreService.createScore(newScore);
+          if (goal.movement == 'total up' || goal.movement == 'total down') {
+            goal.currentScore = Number(goal.currentScore) + Number(goal.score);
+          } else if (goal.movement == 'average up' || goal.movement == 'average down') {
+              let tempScore = ( Number(goal.currentScore) + Number(goal.score)) / 2;
+              goal.currentScore = tempScore.toFixed(2);
+          // } else {
+          //   let 
+          }
+
+          goal.submitScore = false;
+          goal.scoreDate = "";
+          goal.score = "";
+          goal.scoreNotes = "";
+        }
+      })
+    },
+    print(goal) {
+      console.log(goal.scoreTime);
+      let split = goal.scoreTime.split(':');
+      console.log(split)
+      split = (Number(split[0] + split[1]));
+
+      split = split.toString();
+      split = split.split('')
+      split = [split[0] + split[1], split[2] + split[3]]
+      console.log(split)
+    }
   }
 }
 </script>
 
-<style >
+<style scoped>
 .container {
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+  "goals scores";
 }
 .goalsContainer {
   min-height: 600px;
   max-width: 500px;
   border: 2px red solid;
+  grid-area: goals;
 }
-table {
-    border-spacing: 15px;
+table, th, td {
+  border: 2px solid blue;
+  border-collapse: collapse;
+  border-spacing: 90px;
+}
+.newGoal {
+  border-bottom: hidden;
+  border-left:hidden;
+  border-right: hidden;
 }
 .scoreContainer {
   min-height: 600px;
-  max-width: 300px;
+  max-width: 500px;
   border: 2px red solid;
+  grid-area: scores;
+}
+.scoreFooter {
+  border-bottom: hidden;
+  border-left: hidden;
+  border-right: hidden;
+}
+.saveButton {
+  
 }
 .goalRow:hover {
   background-color:cadetblue;
+  cursor: pointer;
+}
+.checkboxCell {
+  background-color:white;
+  cursor: default; 
+}
+.favCheckbox {
   cursor: pointer;
 }
 </style>

@@ -3,10 +3,7 @@ package com.techelevator.controller;
 import com.techelevator.dao.ScoreDao;
 import com.techelevator.model.Score;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,5 +17,10 @@ public class ScoreController {
     @GetMapping(value="/goal-scores/{goalId}")
     public List<Score> getScoresByGoalId(@PathVariable int goalId) {
         return scoreDao.getScoresByGoalId(goalId);
+    }
+
+    @PostMapping(value="/add-score")
+    public void addScore(@RequestBody Score score) {
+        scoreDao.createScore(score);
     }
 }

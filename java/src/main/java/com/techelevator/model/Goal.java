@@ -14,6 +14,15 @@ public class Goal {
     private Date endDate;
     private boolean active;
     private int currentScore;
+    private boolean favorite;
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
 
     public int getCurrentScore() {
         return currentScore;

@@ -13,14 +13,20 @@
       </div>
       <table class="scoresTable">
           <caption class="scoreTableHeader">Score Log</caption>
-          <tr class="headers">
-              <th>Date</th>
-              <th>Score</th>
-          </tr>
-          <tr class="scores" v-for="score in scores" v-bind:key="score.key">
-              <td>{{score.date}}</td>
-              <td>{{score.score}}</td>
-          </tr>
+            <thead>
+                <tr class="headers">
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+          <tbody>
+            <tr class="scores" v-for="score in scores" v-bind:key="score.key">
+                <td>{{score.date}}</td>
+                <td>{{score.score}}</td>
+                <td>{{score.notes}}</td>
+            </tr>
+          </tbody>
       </table>
       <div class="analytics">
           <h3>below is only placeholder text. will eventually be an analytics table</h3>
@@ -132,5 +138,19 @@ export default {
 }
 .analytics {
     grid-area: analytics;
+}
+
+tbody {
+    display:block;
+    overflow: scroll;
+    max-height:450px;
+    width:100%;
+}
+thead tr {
+    display: block;
+}
+tr, td{
+    border: 2px royalblue solid;
+    border-collapse: collapse;
 }
 </style>

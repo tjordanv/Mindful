@@ -30,6 +30,7 @@ export default new Vuex.Store({
     },
     currentDate: "",
     activeGoals: "",
+    favoriteGoals: "",
   },
   mutations: {
     SET_AUTH_TOKEN(state, token) {
@@ -51,6 +52,13 @@ export default new Vuex.Store({
     },
     INCREMENT_ACTIVE_GOALS(state) {
       state.activeGoals ++;
+    },
+    UPDATE_FAVORITE_GOALS(state, favoriteGoals) {
+      state.favoriteGoals = 0;
+      state.favoriteGoals = favoriteGoals
+    },
+    INCREMENT_FAVORITE_GOALS(state, movement) {
+      state.favoriteGoals += movement;
     },
     SET_USER_INFO(state, userInfo) {
       state.userInfo.firstName = userInfo.firstName;

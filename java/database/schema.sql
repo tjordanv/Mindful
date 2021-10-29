@@ -37,36 +37,38 @@ CREATE TABLE goals (
 	start_date date NOT NULL, 
 	end_date date NOT NULL,
 	active boolean NOT NULL,
+	favorite boolean NOT NULL,
 
 	CONSTRAINT PK_goals PRIMARY KEY (goal_id),
 	CONSTRAINT FK_goals_users FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
 
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES 
-(2, 'my weight', 'how much do I weigh each day when I wake up? I want to lose weight', 200, 'average down', 'pounds', '2021-10-01', '2021-11-01', true);
+(2, 'my weight', 'how much do I weigh each day when I wake up? I want to lose weight', 200, 'average down', 'pounds', '2021-10-01', '2021-11-01', true, true);
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES 
-(2, 'money', 'cash is king, I need to stack this paper', 20000, 'total up', 'dollars', '2021-09-01', '2021-10-01', true);
+(2, 'money', 'cash is king, I need to stack this paper', 20000, 'total up', 'dollars', '2021-09-01', '2021-10-01', true, true);
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES
-(2, 'student debt', 'I want to pay off all of this student debt', 0, 'total down', 'dollars', '2021-03-01', '2021-04-20', false);
+(2, 'student debt', 'I want to pay off all of this student debt', 0, 'total down', 'dollars', '2021-03-01', '2021-04-20', false, false);
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES 
-(2, 'Wake up time', 'the early bird gets the worm right?', 0545, 'average down', 'time', '2021-10-01', '2021-12-01', false);
+(2, 'Wake up time', 'the early bird gets the worm right?', 0545, 'average down', 'time', '2021-10-01', '2021-12-01', false, false);
 
 CREATE TABLE goal_scores (
 	score_id serial NOT NULL,
 	goal_id int NOT NULL,
 	date date NOT NULL,
 	score int NOT NULL,
+	notes varchar(200),
 
 	CONSTRAINT PK_goal_scores PRIMARY KEY (score_id),
 	CONSTRAINT FK_goal_scores_goal FOREIGN KEY (goal_id) REFERENCES goals (goal_id)
 );
 
-INSERT INTO goal_scores (goal_id, date, score) VALUES (1, '2021-10-02', 210);
-INSERT INTO goal_scores (goal_id, date, score) VALUES (2, '2021-09-12', 150);
-INSERT INTO goal_scores (goal_id, date, score) VALUES (2, '2021-09-19', 350);
-INSERT INTO goal_scores (goal_id, date, score) VALUES (2, '2021-09-20', 75);
-INSERT INTO goal_scores (goal_id, date, score) VALUES (3, '2021-03-23', 50);
-INSERT INTO goal_scores (goal_id, date, score) VALUES (3, '2021-04-07', 1050);
-INSERT INTO goal_scores (goal_id, date, score) VALUES (4, '2021-10-11', 0630);
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (1, '2021-10-02', 210, "these are the notes");
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (2, '2021-09-12', 150, "theses are the notes");
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (2, '2021-09-19', 350, "these are also notes baby");
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (2, '2021-09-20', 75);
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (3, '2021-03-23', 50, "more notes on the scores yeahhhh");
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (3, '2021-04-07', 1050);
+INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (4, '2021-10-11', 0630);
 
 COMMIT TRANSACTION;

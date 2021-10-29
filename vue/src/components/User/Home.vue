@@ -49,7 +49,27 @@
                 <font-awesome-icon icon="times" class="fa-3x fa-stack-1x" v-if="weeksProgress.saturday.entry == false"/>
             </span>
         </div>
-        <p>content</p>
+    
+        <div>
+            <table>
+            <thead>
+              <tr>
+                <th>Goal</th>
+                <th>End Date</th>
+                <th>Target</th>
+                <th>Current Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key">
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.summary}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.endDate}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
+                <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
     </div>
   </div>
 </template>
@@ -57,6 +77,8 @@
 <script>
 import AuthService from "../../services/AuthService.js";
 import QuoteService from "../../services/QuoteService.js";
+import GoalService from "../../services/GoalService.js";
+import ScoreService from "../../services/ScoreService.js";
 
 export default {
     components: {},
@@ -66,6 +88,7 @@ export default {
                 author: "",
                 text: "",
             },
+            goals: {},
             weeksProgress: {
                 sunday: {
                     entry: true
@@ -92,7 +115,9 @@ export default {
         }
     },
     created() {
-        this.$store.commit("SET_CURRENT_DATE");
+        if (this.$store.state.currentDate === "") {
+            this.$store.commit("SET_CURRENT_DATE");
+        }
 
         AuthService.getUserInfo().then(response => {
               this.$store.commit("SET_USER_INFO", response.data);
@@ -104,6 +129,22 @@ export default {
                 this.quote.text = response.data.text;
             }
         )
+
+        GoalService.getAndCheckGoals().then(
+            (response) => {
+                this.goals = response.data
+                this.goals = this.goals.filter(goal => goal.favorite)
+                this.$store.commit("UPDATE_FAVORITE_GOALS", this.goals.length);
+                console.log(this.$store.state.favoriteGoals);
+                this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
+                    (response) => {
+                        let currentScore = 0;
+                        response.data.forEach(scores => currentScore += scores.score);
+                        goal.currentScore = currentScore;
+                    }   
+                )
+            )
+        });
     },
     methods: {
         info() {
