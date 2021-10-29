@@ -46,7 +46,7 @@
                 <td><input type="date" v-model="goal.scoreDate"></td>
                 <!-- TODO: add condition to assign appropriate input for the score -->
                 <td><input type="number" v-if="goal.units != 'time'" v-model="goal.score">
-                <input type="time" v-if="goal.units == 'time'" v-model="goal.scoreTime" v-on:change="print(goal)"></td>
+                <input type="time" v-if="goal.units == 'time'" v-model="goal.score" v-on:change="print(goal)"></td>
                 <td><textarea v-model="goal.scoreNotes"></textarea></td>
               </tr>
             </tbody>
@@ -95,20 +95,39 @@ export default {
         this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
           (response) => {
             let currentScore = 0;
+            let currentTime = [0, 0];
             response.data.forEach(scores => {
               if (goal.units != 'time') {
                 currentScore += scores.score;
                 goal.currentScore = currentScore;
               } else {
-                //let currentTime = "";
+                  let scoreStr = "";
+                  scoreStr = scores.score.toString();
                   if (scores.score < 1000) {
-                    console.log()
+                  scoreStr = '0' + scoreStr;
                   }
-            }
+                  scoreStr = scoreStr.split('');
+                  scoreStr = [scoreStr[0] + scoreStr[1], scoreStr[2] + scoreStr[3]]
+                  currentTime[0] += Number(scoreStr[0]);
+                  currentTime[1] += Number(scoreStr[1]);
+                  goal.currentScore = currentTime;
+              }
             })
             if (goal.movement == 'average up' || goal.movement == 'average down') {
-              let tempScore = (goal.currentScore / response.data.length);
-              goal.currentScore = tempScore.toFixed(2);
+              if (goal.units != 'time') {
+                let tempScore = (goal.currentScore / response.data.length);
+                goal.currentScore = tempScore.toFixed(2);
+              } else {
+                  let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
+                  minutes /= response.data.length;
+                  goal.currentTime = minutes;
+                  let amPm = minutes < 720 ? 'AM' : 'PM';
+                  minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
+                  if (minutes[1] < 10) {
+                    minutes[1] = "0" + minutes[1].toString()
+                  }
+                  goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
+              }
             }
           }
         )
@@ -130,17 +149,16 @@ export default {
                 currentScore += scores.score;
                 goal.currentScore = currentScore;
               } else {
+                  let scoreStr = "";
+                  scoreStr = scores.score.toString();
                   if (scores.score < 1000) {
-                  let scoreStr =scores.score.toString();
+                  scoreStr = '0' + scoreStr;
+                  }
                   scoreStr = scoreStr.split('');
-                  console.log(scoreStr)
-                  scoreStr = [scoreStr[0], scoreStr[1] + scoreStr[2]]
-                  console.log(scoreStr)
+                  scoreStr = [scoreStr[0] + scoreStr[1], scoreStr[2] + scoreStr[3]]
                   currentTime[0] += Number(scoreStr[0]);
                   currentTime[1] += Number(scoreStr[1]);
-                  console.log(currentTime);
                   goal.currentScore = currentTime;
-              }
             }
             })
             if (goal.movement == 'average up' || goal.movement == 'average down') {
@@ -150,19 +168,13 @@ export default {
               } else {
                   let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
                   minutes /= response.data.length;
+                  goal.currentTime = minutes;
                   let amPm = minutes < 720 ? 'AM' : 'PM';
-                  minutes = [Math.trunc(minutes / 60), minutes % 60]
-                  console.log(minutes)
+                  minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
                   if (minutes[1] < 10) {
                     minutes[1] = "0" + minutes[1].toString()
                   }
                   goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
-                // goal.currentScore = goal.currentScore.forEach(slot => {
-                //   let tempScore = (slot / response.data.length);
-                //   slot = Math.round(tempScore);
-                //   console.log(goal.currentScore)
-                //   console.log(slot)
-                // })
               }
             }
           }
@@ -188,29 +200,48 @@ export default {
           this.goals.forEach(storedGoal => {
           if (storedGoal.goalId == goal.goalId) {
             storedGoal.favorite = false;
-            console.log(storedGoal.favorite);
-            console.log(storedGoal);
           }
           goals.push(storedGoal);
           })
-          console.log(this.goals)
           this.goals = goals;
       }
-      console.log(goals);
-      console.log(this.$store.state.favoriteGoals);
     },
     saveScores() {
       this.goals.forEach(goal => {
         if (goal.submitScore) {
-          let newScore = {goalId: goal.goalId, date: goal.scoreDate, score: goal.score, notes: goal.scoreNotes};
-          ScoreService.createScore(newScore);
-          if (goal.movement == 'total up' || goal.movement == 'total down') {
-            goal.currentScore = Number(goal.currentScore) + Number(goal.score);
+          if (goal.units != 'time') { 
+            let newScore = {goalId: goal.goalId, date: goal.scoreDate, score: goal.score, notes: goal.scoreNotes};
+            ScoreService.createScore(newScore);
+          } else {
+              let currentTime = goal.score.split(":");
+              currentTime = currentTime[0] + currentTime[1];
+              currentTime = Number(currentTime)
+              let newScore = {goalId: goal.goalId, date: goal.scoreDate, score: currentTime, notes: goal.scoreNotes};
+              ScoreService.createScore(newScore);
+          }
+          if (goal.units != 'time') {
+            // TODO: my math is off here. I need to account for the weight of the current scores 
+            // I cannot simply average the current and new score.
+            if (goal.movement == 'total up' || goal.movement == 'total down') {
+              goal.currentScore = Number(goal.currentScore) + Number(goal.score);
           } else if (goal.movement == 'average up' || goal.movement == 'average down') {
               let tempScore = ( Number(goal.currentScore) + Number(goal.score)) / 2;
               goal.currentScore = tempScore.toFixed(2);
-          // } else {
-          //   let 
+          }
+          } else {
+              let newTime = goal.score.split(":");
+              console.log(newTime)
+              newTime = (newTime[0] * 60) + Number(newTime[1]);
+              console.log(newTime)
+              let minutes = (goal.currentTime + newTime) /2;
+              console.log(minutes)
+              console.log(goal.currentTime)
+              let amPm = minutes < 720 ? 'AM' : 'PM';
+              minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
+              if (minutes[1] < 10) {
+                minutes[1] = "0" + minutes[1].toString()
+              }
+              goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
           }
 
           goal.submitScore = false;
@@ -221,8 +252,8 @@ export default {
       })
     },
     print(goal) {
-      console.log(goal.scoreTime);
-      let split = goal.scoreTime.split(':');
+      console.log(goal.score);
+      let split = goal.score.split(':');
       console.log(split)
       split = (Number(split[0] + split[1]));
 
