@@ -41,9 +41,9 @@ public class JdbcGoalDao implements GoalDao{
     public boolean createGoal(Goal goal) {
         Goal newGoal = new Goal();
         String sql = "INSERT INTO goals (user_id, summary, description, goal, movement, units, " +
-                "start_date, end_date, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING goal_id";
+                "start_date, end_date, active, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING goal_id";
         this.newGoalId = jdbcTemplate.queryForObject(sql, Integer.class, goal.getUserId(), goal.getSummary(), goal.getDescription(),
-        goal.getGoal(), goal.getMovement(), goal.getUnits(), goal.getStartDate(), goal.getEndDate(), goal.isActive());
+        goal.getGoal(), goal.getMovement(), goal.getUnits(), goal.getStartDate(), goal.getEndDate(), goal.isActive(), false);
         return this.newGoalId != 0;
     }
 
@@ -79,7 +79,7 @@ public class JdbcGoalDao implements GoalDao{
         dateStr = dateStr.replace("-", "");
         int dateInt = Integer.parseInt(dateStr);
 
-        List<Goal> goals = new ArrayList<>();
+        List<Goal> goals;
         List<Goal> filteredGoals = new ArrayList<>();
         goals = getGoalsByUserId(principal);
         for (Goal goal : goals) {
@@ -88,8 +88,8 @@ public class JdbcGoalDao implements GoalDao{
             int goalEndDateInt = Integer.parseInt(goalDate);
 
             String goalStartDate = formatter.format(goal.getStartDate());
-            goalDate = goalDate.replace("-", "");
-            int goalStartDateInt = Integer.parseInt(goalDate);
+            goalStartDate = goalStartDate.replace("-", "");
+            int goalStartDateInt = Integer.parseInt(goalStartDate);
 
             if (goal.isActive() && goalEndDateInt < dateInt) {
                 updateGoalActiveStatus(goal.getGoalId(), false);

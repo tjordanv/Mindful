@@ -74,6 +74,7 @@ export default {
             } else if (this.newGoal.startDate <= this.currentDate) {
                 this.newGoal.active = true;
             }
+            // TODO: redirect user to goalDetails page rather than goals page.
             GoalService.createNewGoal(this.newGoal).then(
                 this.$store.commit("INCREMENT_ACTIVE_GOALS"),
                 this.$router.push("/goals")

@@ -2,8 +2,8 @@
   <div class="container">
       <div class="goalsContainer">
           <table>
+            <caption>Your Goals</caption>
             <thead>
-              <caption>Your Goals</caption>
               <tr>
                 <th>Goal</th>
                 <th>Start Date</th>
@@ -31,8 +31,8 @@
       </div>
       <div class="scoreContainer">
         <table>
+            <caption>Add Scores</caption>
             <thead>
-              <caption>Add Scores</caption>
               <tr>
                 <th>Add</th>
                 <th>Date</th>
@@ -46,7 +46,7 @@
                 <td><input type="date" v-model="goal.scoreDate"></td>
                 <!-- TODO: add condition to assign appropriate input for the score -->
                 <td><input type="number" v-if="goal.units != 'time'" v-model="goal.score">
-                <input type="time" v-if="goal.units == 'time'" v-model="goal.score" v-on:change="print(goal)"></td>
+                <input type="time" v-if="goal.units == 'time'" v-model="goal.score"></td>
                 <td><textarea v-model="goal.scoreNotes"></textarea></td>
               </tr>
             </tbody>
@@ -96,6 +96,7 @@ export default {
           (response) => {
             let currentScore = 0;
             let currentTime = [0, 0];
+            goal.totalScores = response.data.length;
             response.data.forEach(scores => {
               if (goal.units != 'time') {
                 currentScore += scores.score;
@@ -119,8 +120,8 @@ export default {
                 goal.currentScore = tempScore.toFixed(2);
               } else {
                   let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
-                  minutes /= response.data.length;
                   goal.currentTime = minutes;
+                  minutes /= response.data.length;
                   let amPm = minutes < 720 ? 'AM' : 'PM';
                   minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
                   if (minutes[1] < 10) {
@@ -144,6 +145,7 @@ export default {
           (response) => {
             let currentScore = 0;
             let currentTime = [0, 0];
+            goal.totalScores = response.data.length;
             response.data.forEach(scores => {
               if (goal.units != 'time') {
                 currentScore += scores.score;
@@ -167,8 +169,8 @@ export default {
                 goal.currentScore = tempScore.toFixed(2);
               } else {
                   let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
-                  minutes /= response.data.length;
                   goal.currentTime = minutes;
+                  minutes /= response.data.length;
                   let amPm = minutes < 720 ? 'AM' : 'PM';
                   minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
                   if (minutes[1] < 10) {
@@ -225,17 +227,14 @@ export default {
             if (goal.movement == 'total up' || goal.movement == 'total down') {
               goal.currentScore = Number(goal.currentScore) + Number(goal.score);
           } else if (goal.movement == 'average up' || goal.movement == 'average down') {
-              let tempScore = ( Number(goal.currentScore) + Number(goal.score)) / 2;
+              let tempScore = ( (Number(goal.currentScore) * goal.totalScores) + Number(goal.score)) / (goal.totalScores + 1);
               goal.currentScore = tempScore.toFixed(2);
           }
           } else {
               let newTime = goal.score.split(":");
-              console.log(newTime)
               newTime = (newTime[0] * 60) + Number(newTime[1]);
-              console.log(newTime)
-              let minutes = (goal.currentTime + newTime) /2;
-              console.log(minutes)
-              console.log(goal.currentTime)
+              console.log(goal.totalScores)
+              let minutes = (goal.currentTime + newTime) / (goal.totalScores + 1);
               let amPm = minutes < 720 ? 'AM' : 'PM';
               minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
               if (minutes[1] < 10) {
@@ -282,7 +281,21 @@ export default {
 table, th, td {
   border: 2px solid blue;
   border-collapse: collapse;
-  border-spacing: 90px;
+}
+caption {
+  white-space: nowrap;
+}
+td {
+  height: 50px;
+}
+th {
+  height: 35px;
+}
+input {
+  width: 130px;
+}
+input[type=checkbox] {
+  width: 20px;
 }
 .newGoal {
   border-bottom: hidden;
