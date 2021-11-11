@@ -1,27 +1,31 @@
 <template>
   <div class="container">
-      <div class="goalsContainer">
+      <div class="goalsContainer" v-bind:class="{moveTable: moveTable}">
           <table>
             <caption>Your Goals</caption>
             <thead>
               <tr>
+                <th>Favorite</th>
                 <th>Goal</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Target</th>
                 <th>Current Score</th>
-                <th>Favorite</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key">
+                <td class="checkboxCell"><input class="favCheckbox" type="checkbox" 
+                v-model="goal.favorite" v-on:click="favoriteGoal(goal)"></td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.summary}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.startDate}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.endDate}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
-                <td class="checkboxCell"><input class="favCheckbox" type="checkbox" 
-                v-model="goal.favorite" v-on:click="favoriteGoal(goal)"></td>
+                <td class="newScoreCell"><button class="newScoreButton" v-on:click="moveTableAndForm('show'),
+                score.goalInfo = [goal.summary, goal.units, goal.goalId, goal.movement, goals.indexOf(goal)],
+                scoreTitle = score.goalInfo[0], scoreUnit = score.goalInfo[1]">Add Score</button></td>
               </tr>
             </tbody>
             <tfoot class="newGoal">
@@ -29,31 +33,17 @@
             </tfoot>
           </table>
       </div>
-      <div class="scoreContainer">
-        <table>
-            <caption>Add Scores</caption>
-            <thead>
-              <tr>
-                <th>Add</th>
-                <th>Date</th>
-                <th>Score</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="scoreRow" v-for="goal in goals" v-bind:key="goal.key">
-                <td><input type="checkbox" v-model="goal.submitScore"></td>
-                <td><input type="date" v-model="goal.scoreDate"></td>
-                <!-- TODO: add condition to assign appropriate input for the score -->
-                <td><input type="number" v-if="goal.units != 'time'" v-model="goal.score">
-                <input type="time" v-if="goal.units == 'time'" v-model="goal.score"></td>
-                <td><textarea v-model="goal.scoreNotes"></textarea></td>
-              </tr>
-            </tbody>
-            <tfoot class="scoreFooter">
-              <button class="saveButton" v-on:click="saveScores">Save Scores</button>
-            </tfoot>
-          </table>
+      <div class="scoreContainer" v-bind:class="{showScoreForm : showForm, hideScoreForm : hideForm}">
+        <h2 class="formTitle">{{scoreTitle}}</h2>
+        <form class="scoreForm">
+          <label for="scoreDate">Score Date</label>
+          <input type="date" name="scoreDate" v-model="score.date">
+          <label for="score">Score</label>
+          <input v-if="scoreUnit != 'time'" type="number" name="score" v-model="score.score">
+          <input v-if="scoreUnit == 'time'" type="time" name="score" v-model="score.score">
+          <textarea v-model="score.note"></textarea>
+          <button @click.prevent="saveScore(score), moveTableAndForm('hide')">save</button>
+        </form>
       </div>
   </div>
 </template>
@@ -67,7 +57,12 @@ export default {
     return {
       goals: [],
       currentDate: "",
-      scores: [],
+      score: {},
+      scoreTitle: "",
+      scoreUnit: "",
+      showForm: false,
+      hideForm: true,
+      moveTable: false,
     }
   },
   created() {
@@ -208,58 +203,51 @@ export default {
           this.goals = goals;
       }
     },
-    saveScores() {
-      this.goals.forEach(goal => {
-        if (goal.submitScore) {
-          if (goal.units != 'time') { 
-            let newScore = {goalId: goal.goalId, date: goal.scoreDate, score: goal.score, notes: goal.scoreNotes};
-            ScoreService.createScore(newScore);
-          } else {
-              let currentTime = goal.score.split(":");
-              currentTime = currentTime[0] + currentTime[1];
-              currentTime = Number(currentTime)
-              let newScore = {goalId: goal.goalId, date: goal.scoreDate, score: currentTime, notes: goal.scoreNotes};
-              ScoreService.createScore(newScore);
-          }
-          if (goal.units != 'time') {
-            // TODO: my math is off here. I need to account for the weight of the current scores 
-            // I cannot simply average the current and new score.
-            if (goal.movement == 'total up' || goal.movement == 'total down') {
-              goal.currentScore = Number(goal.currentScore) + Number(goal.score);
-          } else if (goal.movement == 'average up' || goal.movement == 'average down') {
-              let tempScore = ( (Number(goal.currentScore) * goal.totalScores) + Number(goal.score)) / (goal.totalScores + 1);
-              goal.currentScore = tempScore.toFixed(2);
-          }
-          } else {
-              let newTime = goal.score.split(":");
-              newTime = (newTime[0] * 60) + Number(newTime[1]);
-              console.log(goal.totalScores)
-              let minutes = (goal.currentTime + newTime) / (goal.totalScores + 1);
-              let amPm = minutes < 720 ? 'AM' : 'PM';
-              minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
-              if (minutes[1] < 10) {
-                minutes[1] = "0" + minutes[1].toString()
-              }
-              goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
-          }
+    saveScore(score) {
+      if (score.goalInfo[1] != 'time') { 
+        let newScore = {goalId: score.goalInfo[2], date: score.date, score: score.score, notes: score.note};
+        ScoreService.createScore(newScore);
+      } else {
+          let currentTime = score.score.split(":");
+          currentTime = currentTime[0] + currentTime[1];
+          currentTime = Number(currentTime)
+          let newScore = {goalId: score.goalInfo[2], date: score.date, score: currentTime, notes: score.note};
+          ScoreService.createScore(newScore);
+      }
 
-          goal.submitScore = false;
-          goal.scoreDate = "";
-          goal.score = "";
-          goal.scoreNotes = "";
-        }
-      })
+      let goal = this.goals[score.goalInfo[4]]
+      if (goal.units != 'time') {
+        if (goal.movement == 'total up' || goal.movement == 'total down') {
+          goal.currentScore = Number(goal.currentScore) + Number(score.score);
+      } else if (goal.movement == 'average up' || goal.movement == 'average down') {
+          let tempScore = ( (Number(goal.currentScore) * goal.totalScores) + Number(score.score)) / (goal.totalScores + 1);
+          goal.currentScore = tempScore.toFixed(2);
+      }
+      } else {
+          let newTime = score.score.split(":");
+          newTime = (newTime[0] * 60) + Number(newTime[1]);
+          let minutes = (goal.currentTime + newTime) / (goal.totalScores + 1);
+          let amPm = minutes < 720 ? 'AM' : 'PM';
+          minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
+          if (minutes[1] < 10) {
+            minutes[1] = "0" + minutes[1].toString()
+          }
+          goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
+      }
     },
     print(goal) {
-      console.log(goal.score);
-      let split = goal.score.split(':');
-      console.log(split)
-      split = (Number(split[0] + split[1]));
-
-      split = split.toString();
-      split = split.split('')
-      split = [split[0] + split[1], split[2] + split[3]]
-      console.log(split)
+      console.log(goal)
+    }, 
+    moveTableAndForm(direction) {
+      if (direction == "show") {
+        this.showForm = true;
+        this.hideForm = false;
+        this.moveTable = true;
+      } else {
+        this.showForm = false;
+        this.hideForm = true;
+        this.moveTable = false;
+      }
     }
   }
 }
@@ -268,28 +256,51 @@ export default {
 <style scoped>
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: 
-  "goals scores";
+  grid-template-columns: 1fr;
+  grid-template-areas: "goals";
+  width: 100%;
+  height: 100vh;
+  background-color: #eff2f1
 }
 .goalsContainer {
-  min-height: 600px;
-  max-width: 500px;
-  border: 2px red solid;
+  margin-top: 5%;
   grid-area: goals;
+  justify-self: center;
+  z-index: 2;
 }
 table, th, td {
-  border: 2px solid blue;
+  border: 2px solid #f4b942;
   border-collapse: collapse;
+  empty-cells: hide;
 }
 caption {
   white-space: nowrap;
+  font-size: 28pt; 
+  color: #f4b942;
+  font-weight: bold;
+}
+td:nth-child(7) {
+  border-right: hidden;
+  border-bottom: hidden;
+}
+th:nth-child(7) {
+  border-top: hidden;
+  border-right: hidden;
+  border-bottom: hidden;
 }
 td {
   height: 50px;
+  min-width: 75px;
 }
 th {
+  color: #4059ad;
+  font-size: 14pt;
   height: 35px;
+  font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+}
+.moveTable {
+  transform: translateX(-300px);
+  transition: 1s;
 }
 input {
   width: 130px;
@@ -302,11 +313,32 @@ input[type=checkbox] {
   border-left:hidden;
   border-right: hidden;
 }
-.scoreContainer {
-  min-height: 600px;
-  max-width: 500px;
+.scoreContainer  {
+  position: absolute;
+  justify-self: center;
+  top: 22%;
+  width: 400px;
+  height: 500px;
   border: 2px red solid;
-  grid-area: scores;
+  z-index: 1;
+}
+.scoreForm {
+  display: flex;
+  flex-direction: column;
+}
+.showScoreForm {
+  transform: translateX(300px);
+  transition: 1s;
+}
+.hideScoreForm {
+  transform: translateX(-300px);
+  visibility: hidden;
+  transition: 0.5s;
+}
+.formTitle {
+  font-size: 28pt; 
+  color: #f4b942;
+  font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
 }
 .scoreFooter {
   border-bottom: hidden;
@@ -317,14 +349,27 @@ input[type=checkbox] {
   
 }
 .goalRow:hover {
-  background-color:cadetblue;
+  background-color: #f4b942;
   cursor: pointer;
 }
 .checkboxCell {
-  background-color:white;
   cursor: default; 
+  background-color:#eff2f1;
 }
 .favCheckbox {
   cursor: pointer;
+}
+.newScoreCell {
+  cursor: default; 
+  background-color:#eff2f1;
+}
+.newScoreButton {
+  cursor: pointer;
+  border: none;
+  background-color: #4059ad;
+  color: #eff2f1;
+  border-radius: 10px;
+  font-size: 12pt;
+  height: 24px;
 }
 </style>

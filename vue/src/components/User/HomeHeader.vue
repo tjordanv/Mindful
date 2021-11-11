@@ -21,7 +21,6 @@ export default {
   align-items: center;
 }
 .logo{
-  max-height: 300px;
-  max-width: 400px;
+  height: 150px;
 }
 </style>
