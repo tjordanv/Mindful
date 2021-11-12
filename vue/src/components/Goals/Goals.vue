@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-      <div class="goalsContainer" v-bind:class="{moveTable: moveTable}">
+      <div class="goalsContainer" v-bind:class="{moveTable: moveTable, resetTable: resetTable}">
           <table>
             <caption>Your Goals</caption>
             <thead>
@@ -24,8 +24,8 @@
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
                 <td class="newScoreCell"><button class="newScoreButton" v-on:click="moveTableAndForm('show'),
-                score.goalInfo = [goal.summary, goal.units, goal.goalId, goal.movement, goals.indexOf(goal)],
-                scoreTitle = score.goalInfo[0], scoreUnit = score.goalInfo[1]">Add Score</button></td>
+                score.goalId = goal.goalId, score.goalMovement = goal.movement, score.goalIndex = goals.indexOf(goal),
+                scoreTitle = goal.summary, scoreUnit = goal.summary">Add Score</button></td>
               </tr>
             </tbody>
             <tfoot class="newGoal">
@@ -37,12 +37,13 @@
         <h2 class="formTitle">{{scoreTitle}}</h2>
         <form class="scoreForm">
           <label for="scoreDate">Score Date</label>
-          <input type="date" name="scoreDate" v-model="score.date">
+          <input type="date" name="scoreDate" v-model="score.date" required>
           <label for="score">Score</label>
-          <input v-if="scoreUnit != 'time'" type="number" name="score" v-model="score.score">
-          <input v-if="scoreUnit == 'time'" type="time" name="score" v-model="score.score">
-          <textarea v-model="score.note"></textarea>
+          <input v-if="scoreUnit != 'time'" type="number" name="score" v-model="score.score" required>
+          <input v-if="scoreUnit == 'time'" type="time" name="score" v-model="score.score" required>
+          <textarea v-model="score.note" placeholder="Comments"></textarea>
           <button @click.prevent="saveScore(score), moveTableAndForm('hide')">save</button>
+          <button @click.prevent="moveTableAndForm('hide')">Cancel</button>
         </form>
       </div>
   </div>
@@ -63,6 +64,7 @@ export default {
       showForm: false,
       hideForm: true,
       moveTable: false,
+      resetTable: false,
     }
   },
   created() {
@@ -204,18 +206,18 @@ export default {
       }
     },
     saveScore(score) {
-      if (score.goalInfo[1] != 'time') { 
-        let newScore = {goalId: score.goalInfo[2], date: score.date, score: score.score, notes: score.note};
+      if (this.scoreUnit != 'time') { 
+        let newScore = {goalId: score.goalId, date: score.date, score: score.score, notes: score.note};
         ScoreService.createScore(newScore);
       } else {
           let currentTime = score.score.split(":");
           currentTime = currentTime[0] + currentTime[1];
           currentTime = Number(currentTime)
-          let newScore = {goalId: score.goalInfo[2], date: score.date, score: currentTime, notes: score.note};
+          let newScore = {goalId: score.goalId, date: score.date, score: currentTime, notes: score.note};
           ScoreService.createScore(newScore);
       }
 
-      let goal = this.goals[score.goalInfo[4]]
+      let goal = this.goals[score.goalIndex]
       if (goal.units != 'time') {
         if (goal.movement == 'total up' || goal.movement == 'total down') {
           goal.currentScore = Number(goal.currentScore) + Number(score.score);
@@ -247,6 +249,7 @@ export default {
         this.showForm = false;
         this.hideForm = true;
         this.moveTable = false;
+        this.resetTable = true;
       }
     }
   }
@@ -302,6 +305,9 @@ th {
   transform: translateX(-300px);
   transition: 1s;
 }
+.resetTable {
+  transition: 1s;
+}
 input {
   width: 130px;
 }
@@ -331,7 +337,6 @@ input[type=checkbox] {
   transition: 1s;
 }
 .hideScoreForm {
-  transform: translateX(-300px);
   visibility: hidden;
   transition: 0.5s;
 }
