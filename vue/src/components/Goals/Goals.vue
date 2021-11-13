@@ -25,25 +25,31 @@
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
                 <td class="newScoreCell"><button class="newScoreButton" v-on:click="moveTableAndForm('show'),
                 score.goalId = goal.goalId, score.goalMovement = goal.movement, score.goalIndex = goals.indexOf(goal),
-                scoreTitle = goal.summary, scoreUnit = goal.summary">Add Score</button></td>
+                scoreTitle = goal.summary, scoreUnit = goal.units">Add Score</button></td>
               </tr>
             </tbody>
-            <tfoot class="newGoal">
-              <router-link  :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link>
+            <tfoot class="newGoalCell">
+              <button class="newGoal"><router-link class="newGoalLink" :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link></button>
             </tfoot>
           </table>
       </div>
       <div class="scoreContainer" v-bind:class="{showScoreForm : showForm, hideScoreForm : hideForm}">
-        <h2 class="formTitle">{{scoreTitle}}</h2>
-        <form class="scoreForm">
-          <label for="scoreDate">Score Date</label>
-          <input type="date" name="scoreDate" v-model="score.date" required>
-          <label for="score">Score</label>
-          <input v-if="scoreUnit != 'time'" type="number" name="score" v-model="score.score" required>
-          <input v-if="scoreUnit == 'time'" type="time" name="score" v-model="score.score" required>
-          <textarea v-model="score.note" placeholder="Comments"></textarea>
-          <button @click.prevent="saveScore(score), moveTableAndForm('hide')">save</button>
-          <button @click.prevent="moveTableAndForm('hide')">Cancel</button>
+        <h1 class="formTitle">{{scoreTitle}}</h1>
+        <form class="scoreForm" @submit.prevent="saveScore(score), moveTableAndForm('hide')">
+          <span>
+            <label for="scoreDate">Date:</label>
+            <input class="scoreDate" type="date" name="scoreDate" v-model="score.date" required>
+          </span>
+          <span>
+            <label for="score">Score:</label>
+            <input class="score" v-if="scoreUnit != 'time'" type="number" name="score" v-model="score.score" required>
+            <input class="score" v-if="scoreUnit == 'time'" type="time" name="score" v-model="score.score" required>
+          </span>
+            <textarea class="notes" v-model="score.note" placeholder="Comments"></textarea>
+          <span class="scoreButtons">
+            <button type="submit">save</button> |
+            <button @click.prevent="moveTableAndForm('hide')">Cancel</button>
+          </span>
         </form>
       </div>
   </div>
@@ -72,8 +78,6 @@ export default {
     if (this.$store.state.currentDate === "") {
       this.$store.commit("SET_CURRENT_DATE");
     }
-
-    
 
     this.currentDate = this.$store.state.currentDate; 
 
@@ -131,7 +135,6 @@ export default {
         )
         )
       });
-    
   },
   beforeMount() {
     GoalService.getAndCheckGoals().then(
@@ -263,13 +266,14 @@ export default {
   grid-template-areas: "goals";
   width: 100%;
   height: 100vh;
-  background-color: #eff2f1
+  background-color: #eff2f1;
 }
 .goalsContainer {
   margin-top: 5%;
   grid-area: goals;
   justify-self: center;
-  z-index: 2;
+  z-index: 3;
+  background-color: #eff2f1;
 }
 table, th, td {
   border: 2px solid #f4b942;
@@ -299,10 +303,10 @@ th {
   color: #4059ad;
   font-size: 14pt;
   height: 35px;
-  font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+  /* font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; */
 }
 .moveTable {
-  transform: translateX(-300px);
+  transform: translateX(-250px);
   transition: 1s;
 }
 .resetTable {
@@ -314,23 +318,46 @@ input {
 input[type=checkbox] {
   width: 20px;
 }
-.newGoal {
+.newScoreButton {
+  cursor: pointer;
+  border: none;
+  background-color: #4059ad;
+  color: #eff2f1;
+  border-radius: 10px;
+  font-size: 12pt;
+  height: 24px;
+}
+.newGoalCell {
   border-bottom: hidden;
   border-left:hidden;
   border-right: hidden;
 }
+.newGoal {
+  margin-top: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #4059ad;
+  border-radius: 10px;
+  height: 24px;
+}
+.newGoalLink {
+  color: white;
+  text-decoration: none;
+  font-size: 12pt;
+}
 .scoreContainer  {
   position: absolute;
   justify-self: center;
-  top: 22%;
+  justify-content: center;
+  margin-top: 5%;
   width: 400px;
-  height: 500px;
-  border: 2px red solid;
+  height: 300px;
   z-index: 1;
 }
 .scoreForm {
   display: flex;
   flex-direction: column;
+  border: 2px solid #f4b942;
 }
 .showScoreForm {
   transform: translateX(300px);
@@ -343,15 +370,37 @@ input[type=checkbox] {
 .formTitle {
   font-size: 28pt; 
   color: #f4b942;
-  font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif;
+  /* font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; */
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
 }
-.scoreFooter {
-  border-bottom: hidden;
-  border-left: hidden;
-  border-right: hidden;
+label {
+  font-size: 14pt;
+  color: #4059ad;
+  display: inline-block;
+  width: 100px;
 }
-.saveButton {
-  
+span > input {
+  width: 50%;
+  margin-bottom: 10px;
+}
+.notes {
+  align-self: center;
+  width: 75%;
+}
+.scoreButtons {
+  align-self: center;
+}
+.scoreButtons > button {
+  margin: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #4059ad;
+  color: #eff2f1;
+  border-radius: 10px;
+  font-size: 12pt;
+  height: 24px;
 }
 .goalRow:hover {
   background-color: #f4b942;
@@ -367,14 +416,5 @@ input[type=checkbox] {
 .newScoreCell {
   cursor: default; 
   background-color:#eff2f1;
-}
-.newScoreButton {
-  cursor: pointer;
-  border: none;
-  background-color: #4059ad;
-  color: #eff2f1;
-  border-radius: 10px;
-  font-size: 12pt;
-  height: 24px;
 }
 </style>
