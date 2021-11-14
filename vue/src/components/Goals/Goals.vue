@@ -276,14 +276,14 @@ export default {
   background-color: #eff2f1;
 }
 table, th, td {
-  border: 2px solid #f4b942;
+  border: 2px solid #ffd47d;
   border-collapse: collapse;
   empty-cells: hide;
 }
 caption {
   white-space: nowrap;
   font-size: 28pt; 
-  color: #f4b942;
+  color: #ffd47d;
   font-weight: bold;
 }
 td:nth-child(7) {
@@ -357,7 +357,7 @@ input[type=checkbox] {
 .scoreForm {
   display: flex;
   flex-direction: column;
-  border: 2px solid #f4b942;
+  border: 2px solid #ffd47d;
 }
 .showScoreForm {
   transform: translateX(300px);
@@ -369,7 +369,7 @@ input[type=checkbox] {
 }
 .formTitle {
   font-size: 28pt; 
-  color: #f4b942;
+  color: #ffd47d;
   /* font-family: Avantgarde, TeX Gyre Adventor, URW Gothic L, sans-serif; */
   text-align: center;
   margin-top: 0;
@@ -403,7 +403,7 @@ span > input {
   height: 24px;
 }
 .goalRow:hover {
-  background-color: #f4b942;
+  background-color: #ffd47d;
   cursor: pointer;
 }
 .checkboxCell {

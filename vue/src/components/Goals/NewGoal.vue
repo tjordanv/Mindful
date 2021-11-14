@@ -5,40 +5,47 @@
             <p>Provide a brief summary of your goal, this should be a concise call to action. 
                 You can also think of this as a title or header!</p>
             <p><input type="text" class="input" placeholder="Summary" maxlength="25"
-            v-model="newGoal.summary" oninput="this.className = 'newGoalSum, input'"></p>
+            v-model="newGoal.summary" oninput="this.className = 'input'"></p>
             <p>Take a moment to think a bit deeper about this goal and then provide a more detailed 
                 description below. Why are you persuing this goal and what impact will it have on 
                 you? How will you reach this goal and hold yourself accountable along the way? Thoughts
                 like these must be considered in order to set effective goals.  
             </p>
-            <p><textarea class="input" placeholder="Description" rows="5" maxlength="800"
+            <p><textarea class="input" placeholder="Description" rows="3" maxlength="800"
             v-model="newGoal.description" oninput="this.className = 'input'"></textarea></p> 
         </div>
         <div class="tab" v-show="currentTab == 1">
-            <label for="units">Units</label>
-            <select class="input" name="units" v-model="newGoal.units" oninput="this.className = 'input'">
+            <p>What will you goal be measured in?</p>
+            <p><select class="input" name="units" v-model="newGoal.units" oninput="this.className = 'input'">
+                <option selected value="">Units</option>
                 <option value="dollars">Dollars</option>
                 <option value="lbs">Pounds</option>
                 <option value="time">Time</option>
-            </select>  
-            <label for="movement">Movement</label>
-            <select class="input" name="movement" v-model="newGoal.movement" oninput="this.className = 'input'">
-                <option value="total up">Total Up</option>
-                <option value="total down">Total Down</option>
-                <option value="average up">Average Up</option>
-                <option value="average down">Average Down</option>
-            </select> 
+            </select></p>  
+            <p>What direction is your goal headed?</p>
+            <p><select class="input" name="movement" v-model="newGoal.movement" oninput="this.className = 'input'">
+                <option selected value="">Goal Direction</option>
+                <option value="total up">higher Total</option>
+                <option value="total down">Lower Total</option>
+                <option value="average up">Higher Average</option>
+                <option value="average down">Lower Average</option>
+            </select></p> 
             <!--add v-ifs to display the correct goal input field that corresponds with the units  -->
-            <input type="number" class="goalCurrency, input" placeholder="Goal" v-model="newGoal.goal" v-if="newGoal.units === 'dollars'"  min="0" oninput="this.className = 'goalCurrecny, input'">  
-            <input type="text" class="goal, input" placeholder="Goal" v-model="newGoal.goal" v-if="newGoal.units !== 'dollars'" oninput="this.className = 'goal, input'">  
+            <p>What is your target?</p>
+            <p><input type="time" class="input" placeholder="Target" v-model="newGoal.goal" 
+            v-if="newGoal.units === 'time'"  min="0" oninput="this.className = 'input'"></p>  
+            <p><input type="number" class="input" placeholder="Target" v-model="newGoal.goal" 
+            v-if="newGoal.units !== 'time'" oninput="this.className = 'input'"></p>  
         </div>  
         <div class="tab" v-show="currentTab == 2">
-            <label for="startDate">Start Date</label>
-            <input type="Date" class="newGoalDateInput, input" name="startDate" v-model="newGoal.startDate" oninput="this.className = 'newGoalDate, input'">  
-            <label for="endDate">End Date</label>
-            <input type="Date" class="newGoalDateInput, input" name="endDate" v-model="newGoal.endDate" oninput="this.className = 'newGoalDate, input'">  
+            <p>When will this goal begin?</p>
+            <p><input type="Date" class="newGoalDateInput, input" name="startDate" 
+            v-model="newGoal.startDate" oninput="this.className = 'newGoalDate, input'"></p>  
+            <p>When will this goal end?</p>
+            <p><input type="Date" class="newGoalDateInput, input" name="endDate" 
+            v-model="newGoal.endDate" oninput="this.className = 'newGoalDate, input'"></p>  
         </div>
-        <div>
+        <div class="buttons">
             <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 2">Next</button>
             <button class="submitBtn" @click.prevent="createNewGoal()" v-if="currentTab == 2">Save</button>
             <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
@@ -161,11 +168,15 @@ display: grid;
   background-color: #eff2f1;
 }
 .newGoal {
-    width: 400px;
+    width: 500px;
+    height: 400px;
     margin-top: 5%;
     grid-area: newGoal;
     justify-self: center;
-    background-color: #f4b942;
+    background-color: #ffd47d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 input[type=text] {
     width: 90%;
@@ -173,15 +184,20 @@ input[type=text] {
 textarea {
     width: 90%;
 }
+select {
+    width: 30%;
+}
+input[type=time], input[type=number] {
+    width: 30%;
+}
 .invalid {
-    background-color: #ffdddd;
+    background-color: #ffa8a8;
 }
 p {
     text-align: center;
 }
 .progressTracker {
     text-align: center;
-    margin-top: 40px;
 }
 .step {
     height: 20px;
@@ -198,5 +214,18 @@ p {
 }
 .step.complete {
     background-color: green;
+}
+.buttons {
+    align-self: center;
+}
+button {
+    margin: 0 10px;
+    cursor: pointer;
+    border: none;
+    background-color: #4059ad;
+    color: #eff2f1;
+    border-radius: 10px;
+    font-size: 12pt;
+    height: 24px;
 }
 </style>

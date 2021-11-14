@@ -20,7 +20,7 @@ export default {
   background-color: #6b9ac4;
 }
 img {
-    height: 175px;
+    height: 125px;
 }
 .link{
     font-size: 20pt;
