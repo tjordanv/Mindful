@@ -7,9 +7,7 @@
             <p><input type="text" class="input" placeholder="Summary" maxlength="25"
             v-model="newGoal.summary" oninput="this.className = 'input'"></p>
             <p>Take a moment to think a bit deeper about this goal and then provide a more detailed 
-                description below. Why are you persuing this goal and what impact will it have on 
-                you? How will you reach this goal and hold yourself accountable along the way? Thoughts
-                like these must be considered in order to set effective goals.  
+                description below.  
             </p>
             <p><textarea class="input" placeholder="Description" rows="3" maxlength="800"
             v-model="newGoal.description" oninput="this.className = 'input'"></textarea></p> 
@@ -102,7 +100,7 @@ export default {
     mounted() {
         let steps = document.getElementsByClassName("progressTracker");
         steps[0].firstElementChild.classList.add("active");
-    } ,
+    },
     methods: {
         createNewGoal() {
             if (this.validateForm()) {

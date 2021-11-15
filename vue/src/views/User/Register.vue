@@ -1,48 +1,83 @@
 <template>
-  <div id="register" class="text-center">
-    <form class="form-register" @submit.prevent="register">
-      <h1 class="h3 mb-3 font-weight-normal">Create Account</h1>
-      <div class="alert alert-danger" role="alert" v-if="registrationErrors">
+  <div id="register" class="container">
+    <form class="form-register">
+      <h1 class="header">Create Account</h1>
+      <div class="tab" v-show="currentTab == 0">
+        <div>
+          <label>First Name</label>
+          <input type="text" class="input" v-model="user.firstName"
+          autofocus oninput="this.className = 'input'">
+        </div>
+        <span class="spacer"></span>
+        <div>
+          <label>Last Name</label>
+          <input type="text" class="input" v-model="user.lastName"
+          oninput="this.className = 'input'">
+        </div>
+      </div>
+      <div class="tab" v-show="currentTab == 1">
+        <div><label>Email</label>
+        <input type="email" class="input" oninput="this.className = 'input'" 
+        v-model="user.email"></div>
+        <span class="spacer"></span>
+        <div><label>Phone Number</label>
+        <input type="number" class="input" oninput="this.className = 'input'"
+        v-model="user.phone"></div>
+      </div>
+      <div class="tab" v-show="currentTab == 2">
+        <div><label>Username</label>
+        <input
+          type="text"
+          id="username"
+          class="input"
+          oninput="this.className = 'input'"
+          v-model="user.username"
+        /></div>
+        <span class="spacer"></span>
+        <div><label>Password</label>
+        <input
+          type="password"
+          class="input"
+          oninput="this.className = 'input'"
+          v-model="user.password"
+        /></div>
+        <span class="spacer"></span>
+        <div><label>Confirm Password</label>
+        <input
+          type="password"
+          class="input"
+          oninput="this.className = 'input'"
+          v-model="user.confirmPassword"
+        /></div>
+      </div>
+      <div class="buttons">
+          <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 2">Next</button>
+          <button class="saveBtn" @click.prevent="register()" v-if="currentTab == 2">Save</button>
+          <span class="spacer"></span>
+          <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
+          <button class="CancelBtn" @click.prevent="navToLanding()" v-if="currentTab == 0">Cancel</button>
+      </div>
+      <div class="progressTracker">
+        <span class="step"></span>
+        <span class="step"></span>
+        <span class="step"></span>
+      </div>
+      <span class="loginLink">
+        Have an account?
+        <router-link :to="{ name: 'login' }">Click here to login</router-link>
+      </span>
+    </form>
+    <div class="alerts" v-show="registrationErrors || passwordFailed">
+      <div class="alert" v-show="registrationErrors">
         {{ registrationErrorMsg }}
       </div>
-      <input type="text" placeholder="First Name" v-model="user.firstName" autofocus required>
-      <input type="text" placeholder="Last Name" v-model="user.lastName" required>
-      <input type="text" placeholder="Email" v-model="user.email" required>
-      <input type="text" placeholder="Phone Number" v-model="user.phone">
-      <input
-        type="text"
-        id="username"
-        class="form-control"
-        placeholder="Username"
-        v-model="user.username"
-        required
-      />
-      <input
-        type="password"
-        id="password"
-        class="form-control"
-        placeholder="Password"
-        v-model="user.password"
-        required
-      />
-      <input
-        type="password"
-        id="confirmPassword"
-        class="form-control"
-        placeholder="Confirm Password"
-        v-model="user.confirmPassword"
-        required
-      />
-      <router-link :to="{ name: 'login' }">Have an account?</router-link>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">
-        Create Account
-      </button>
-    </form>
-    <p v-if="passwordFailed == true">Password must contain at least:
-      8 Total Characters
-      1 Uppercase Letter
-      1 Number
-    </p>
+      <div class="alert" v-show="passwordFailed">
+        Password must contain at least:
+        8 Total Characters
+        1 Uppercase Letter
+        1 Number
+      </div>
+    </div>
   </div>
 </template>
 
@@ -66,12 +101,18 @@ export default {
       passwordFailed: false,
       registrationErrors: false,
       registrationErrorMsg: 'There were problems registering this user.',
+      currentTab: 0,
     };
+  },
+  mounted() {
+        let steps = document.getElementsByClassName("progressTracker");
+        steps[0].firstElementChild.classList.add("active");
   },
   methods: {
     register() {
-      if (this.user.password != this.user.confirmPassword) {
-        this.registrationErrors = true;
+      if (this.validateForm()) {
+        if (this.user.password != this.user.confirmPassword) {
+          this.registrationErrors = true;
         this.registrationErrorMsg = 'Password & Confirm Password do not match.';
       } else if (this.passwordRequirements()) {
         authService
@@ -94,6 +135,7 @@ export default {
       } else {
         this.passwordFailed = true;
       }
+    }
     },
     passwordRequirements() {
       let passStr = this.user.password;
@@ -110,8 +152,188 @@ export default {
       this.registrationErrors = false;
       this.registrationErrorMsg = 'There were problems registering this user.';
     },
+    tabNav(n) {
+      if (n == 1 && !this.validateForm()) {
+          return false;
+      } else {
+          this.currentTab += n;
+          this.stepIndicator(this.currentTab);
+      }
+    },
+    validateForm() {
+      let valid = true;
+      let tabs = document.getElementsByClassName("tab");
+      let tabInputs = tabs[this.currentTab].getElementsByClassName("input");
+      for (let i = 0; i < tabInputs.length; i ++) {
+          if (tabInputs[i].value == "") {
+              tabInputs[i].classList.add("invalid");
+              valid = false;
+          } 
+      }
+
+      if (valid) {
+          document.getElementsByClassName("step")[this.currentTab].className += " complete";
+      }
+
+      return valid;
+    },
+    stepIndicator(n) {
+      let steps = document.getElementsByClassName("step");
+      for (let i = 0; i < steps.length; i++) {
+          steps[i].classList.remove("active");
+          // steps[i].className = steps[i].className.replace(" active", "");
+      }
+      steps[n].classList.add("active");
+    },
+    navToLanding() {
+        this.$router.push("/landing");
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas: "form"
+  "alerts";
+  height: 100vh;
+  justify-items: center;
+  align-items: center;
+  background-color: #eff2f1;
+}
+.form-register {
+  display: grid;
+  grid-area: form;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "header"
+    "inputs"
+    "buttons"
+    "tracker"
+    "loginLink";
+  width: 320px;
+  height: auto;
+  background-color: #ffd47d;
+  border-radius: 10px;
+  padding: 10px;
+  color: #eff2f1;
+  box-shadow: 5px 5px 5px #4059ad;
+}
+.tab {
+  grid-area: inputs;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  min-height: 100px;
+  margin: 0 0 0 30px;
+}
+.header {
+  text-decoration: underline;
+  color: #eff2f1;
+  grid-area: header;
+  justify-self: center;
+}
+.form-register input {
+  height: 25px;
+  min-width: 250px;
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+}
+.form-register input:focus {
+  height: 21px;
+  border: 2px solid #4059ad;
+  box-shadow: 0 0 10px #4059ad;
+  outline: none;
+}
+.invalid {
+  background-color: #ffa8a8;
+}
+p {
+  text-align: center;
+}
+.progressTracker {
+  text-align: center;
+  grid-area: tracker;
+  margin: 5px 0 5px 0;
+}
+.step {
+  height: 20px;
+  width: 20px;
+  margin: 0 3px;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.5;
+}
+.active {
+  opacity: 1;
+}
+.step.complete {
+  background-color: green;
+}
+.buttons {
+  grid-area: buttons;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 320px;
+  height: 100px;
+}
+.spacer {
+    margin: 5px;
+  }
+button {
+  cursor: pointer;
+  min-height: 35px;
+  width: 100px;
+  font-size: 16px;
+  border-radius: 15px;
+  border: none;
+  color: #eff2f1;
+  background-color: #4059ad;
+  font-weight: bold;
+  box-shadow: 2px 3px 2px #eff2f1;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+label{
+  font-size: 14pt;
+  color: #eff2f1;
+}
+.alerts {
+  grid-area: alerts;
+  align-self: flex-start;
+  margin: 0;
+  color: rgb(206, 0, 0);
+  border: 1px solid red;
+  box-shadow: 0 0 10px red;
+  padding:0 10px;
+}
+.alert {
+  font-size: 14px;
+  text-align: center;
+}
+.loginLink {
+  grid-area: loginLink;
+  justify-self: center;
+  font-size: 14px;
+}
+a:link {
+  color: #bcf7e5;
+}
+a:visited {
+  color: #8dbee9;
+}
+a:hover {
+  color: #4059ad;
+}
+</style>

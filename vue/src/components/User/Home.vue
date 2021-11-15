@@ -115,13 +115,19 @@ export default {
         }
     },
     created() {
-        if (this.$store.state.currentDate === "") {
-            this.$store.commit("SET_CURRENT_DATE");
+        // ensure user is loged in
+        if (this.$store.state.user == false) {
+            this.$router.push("/login")
         }
 
         AuthService.getUserInfo().then(response => {
               this.$store.commit("SET_USER_INFO", response.data);
         })
+
+        if (this.$store.state.currentDate === "") {
+            this.$store.commit("SET_CURRENT_DATE");
+        }
+
 
         QuoteService.getQuote().then(
             (response) => {
@@ -135,7 +141,6 @@ export default {
                 this.goals = response.data
                 this.goals = this.goals.filter(goal => goal.favorite)
                 this.$store.commit("UPDATE_FAVORITE_GOALS", this.goals.length);
-                console.log(this.$store.state.favoriteGoals);
                 this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
                     (response) => {
                         let currentScore = 0;
