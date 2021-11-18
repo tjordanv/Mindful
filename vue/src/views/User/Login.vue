@@ -103,7 +103,7 @@ export default {
       return valid;
     },
     navToLanding() {
-        this.$router.push("/landing");
+        this.$router.push("/");
     },
   }
 };

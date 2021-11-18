@@ -7,7 +7,7 @@
 
 <script>
 import Goals from "../../components/Goals/Goals.vue"
-import GoalsHeader from "../../components/Goals/GoalsHeader.vue"
+import GoalsHeader from "../../components/Headers/GoalsHeader.vue"
 
 export default {
   components: {

@@ -15,14 +15,15 @@
         <div class="tab" v-show="currentTab == 1">
             <p>What will you goal be measured in?</p>
             <p><select class="input" name="units" v-model="newGoal.units" oninput="this.className = 'input'">
-                <option selected value="">Units</option>
+                <option selected value="" v-if="newGoal.units == ''">Units</option>
+                <option value="general">General</option>
                 <option value="dollars">Dollars</option>
                 <option value="lbs">Pounds</option>
                 <option value="time">Time</option>
             </select></p>  
             <p>What direction is your goal headed?</p>
             <p><select class="input" name="movement" v-model="newGoal.movement" oninput="this.className = 'input'">
-                <option selected value="">Goal Direction</option>
+                <option selected value="" v-if="newGoal.movement == ''">Goal Direction</option>
                 <option value="total up">higher Total</option>
                 <option value="total down">Lower Total</option>
                 <option value="average up">Higher Average</option>

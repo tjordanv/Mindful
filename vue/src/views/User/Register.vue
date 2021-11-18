@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     register() {
-      if (this.validateForm()) {
+      if (this.validateForm(true)) {
         if (this.user.password != this.user.confirmPassword) {
           this.registrationErrors = true;
         this.registrationErrorMsg = 'Password & Confirm Password do not match.';
@@ -153,14 +153,14 @@ export default {
       this.registrationErrorMsg = 'There were problems registering this user.';
     },
     tabNav(n) {
-      if (n == 1 && !this.validateForm()) {
+      if (n == 1 && !this.validateForm(false)) {
           return false;
       } else {
           this.currentTab += n;
           this.stepIndicator(this.currentTab);
       }
     },
-    validateForm() {
+    validateForm(register) {
       let valid = true;
       let tabs = document.getElementsByClassName("tab");
       let tabInputs = tabs[this.currentTab].getElementsByClassName("input");
@@ -171,7 +171,7 @@ export default {
           } 
       }
 
-      if (valid) {
+      if (valid && !register) {
           document.getElementsByClassName("step")[this.currentTab].className += " complete";
       }
 

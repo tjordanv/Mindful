@@ -11,6 +11,7 @@ import Reflect from "../views/Reflections/Reflect.vue"
 import Goals from "../views/Goals/Goals.vue"
 import NewGoal from "../views/Goals/NewGoal.vue"
 import GoalDetails from "../views/Goals/GoalDetails.vue"
+import Community from "../views/Community/Community.vue"
 
 Vue.use(Router)
 
@@ -107,6 +108,14 @@ const router = new Router({
         requiresAuth: true
       }
     },
+    {
+      path: "/community",
+      name: "community",
+      component: Community,
+      meta: {
+        requiresAuth: true
+      }
+    },
   ]
 })
 
@@ -116,7 +125,7 @@ router.beforeEach((to, from, next) => {
 
   // If it does and they are not logged in, send the user to "/login"
   if (requiresAuth && store.state.token === '') {
-    next("/landing");
+    next("/");
   } else {
     // Else let them go to their next destination
     next();

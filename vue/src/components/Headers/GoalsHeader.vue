@@ -1,7 +1,8 @@
 <template>
     <nav class="container">
-        <router-link class="link" :to="{name: 'home'}">Home</router-link>
-        <img src="../../pics/picture.png">
+        <p v-if="$route.path == '/goals'">spacerspa</p>
+        <router-link class="link" v-if="$route.path != '/goals'" :to="{name: 'goals'}">Goals</router-link>
+        <router-link class="link" :to="{name: 'home'}"><img src="../../pics/picture.png"></router-link>
         <router-link class="link" :to="{name: 'logout'}">Logout</router-link>
     </nav>
 </template>
@@ -26,5 +27,7 @@ img {
     font-size: 20pt;
     color: white;
 }
-
+p {
+    color: #6b9ac4;
+}
 </style>
