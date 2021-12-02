@@ -115,19 +115,14 @@ export default {
         }
     },
     created() {
-        // ensure user is loged in
-        if (this.$store.state.user == false) {
-            this.$router.push("/login")
-        }
-
         AuthService.getUserInfo().then(response => {
               this.$store.commit("SET_USER_INFO", response.data);
         })
+        console.log(this.$store.state.userInfo)
 
         if (this.$store.state.currentDate === "") {
             this.$store.commit("SET_CURRENT_DATE");
         }
-
 
         QuoteService.getQuote().then(
             (response) => {

@@ -5,18 +5,18 @@ import com.techelevator.model.User;
 import java.security.Principal;
 import java.util.List;
 
-public interface UserDao {
+public interface UserDao<T> {
 
-    List<User> findAll();
+    List<T> findAll();
 
-    User getUserById(Long userId);
+    T getByCriteria(String criteria, T criteriaValue);
+    T getAllByCriteria(String criteria, T criteriaValue);
 
-    User getUserByUsername(Principal principal);
+    T getUserByUsername(Principal principal);
 
     User findByUsername(String username);
 
     int findIdByUsername(String username);
 
-    boolean create(String firstName, String lastName, String email,
-                   String phone, String username, String password, String role);
+    boolean create(T newObject);
 }

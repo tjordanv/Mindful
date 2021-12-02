@@ -1,6 +1,7 @@
 package com.techelevator.model;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 
 public class RegisterUserDTO {
 
@@ -8,6 +9,10 @@ public class RegisterUserDTO {
     private String firstName;
     @NotEmpty
     private String lastName;
+    private Date joinDate;
+    private String missionStatement;
+    private String city;
+    private String state;
     @NotEmpty
     private String email;
     private String phone;
@@ -19,6 +24,56 @@ public class RegisterUserDTO {
     private String confirmPassword;
     @NotEmpty(message = "Please select a role for this user.")
     private String role;
+
+
+    public RegisterUserDTO(String firstName, String lastName, Date joinDate, String missionStatement,
+                           String city, String state, String email, String phone, String username,
+                           String password, String confirmPassword, String role) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.joinDate = joinDate;
+        this.missionStatement = missionStatement;
+        this.city = city;
+        this.state = state;
+        this.email = email;
+        this.phone = phone;
+        this.username = username;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
+        this.role = role;
+    }
+
+    public Date getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(Date joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public String getMissionStatement() {
+        return missionStatement;
+    }
+
+    public void setMissionStatement(String missionStatement) {
+        this.missionStatement = missionStatement;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
 
     public String getFirstName() {
         return firstName;

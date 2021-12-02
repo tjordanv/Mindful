@@ -24,6 +24,23 @@
             />
           </div>
         </div>
+        <div class="alerts">
+          <div 
+            class="alert alert-danger"
+            role="alert"
+            v-if="invalidCredentials"
+          >
+            Invalid username or password
+          </div>
+          <div
+            class="alert alert-success"
+            role="alert"
+            v-if="this.$route.query.registration"
+          >
+            Thank you for registering<br />
+            Please sign in
+          </div>
+        </div>
         <div class="buttons">
           <br /><button class="btn" @click.prevent="validateForm() && login()">Log In</button>
           <br /><button class="btn" @click.prevent="navToLanding()">Cancel</button>
@@ -36,23 +53,7 @@
         >
       </span>
     </form>
-    <div class="alerts">
-      <div 
-        class="alert alert-danger"
-        role="alert"
-        v-if="invalidCredentials"
-      >
-        Invalid username or password
-      </div>
-      <div
-        class="alert alert-success"
-        role="alert"
-        v-if="this.$route.query.registration"
-      >
-        Thank you for registering<br />
-        Please sign in
-      </div>
-    </div>
+    
   </div>
 </template>
 
@@ -114,11 +115,11 @@ export default {
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
-  grid-template-areas: "form"
-  "alerts";
+  grid-template-areas: "form";
   justify-items: center;
   align-items: center;
   background-color: #eff2f1;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .form-signin {
@@ -130,12 +131,12 @@ export default {
     "inputs"
     "loginLink";
   width: 320px;
-  height: auto;
+  height: 450px;
   background-color: #ffd47d;
   border-radius: 10px;
   padding: 10px;
   color: #eff2f1;
-  box-shadow: 5px 5px 5px #4059ad;
+  box-shadow: 0px 0px 8px 2px #4059ad;
 }
 
 .inputs {
@@ -150,25 +151,60 @@ export default {
 .user-info {
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-around;
   align-items: center;
   min-height: 100px;
-  margin: 0 0 0 30px;
+  margin: 0 0 20px 30px;
+}
+
+.header {
+  text-decoration: underline;
+  grid-area: header;
+  justify-self: center;
+  text-shadow: 0.5px 0.5px gray;
+  cursor: default;
 }
 
 .form-signin input {
   height: 25px;
   min-width: 250px;
   font-size: 14px;
-  border-radius: 4px;
+  border-radius: 5px;
   border: none;
+  margin-top: 5px;
 }
-
 .form-signin input:focus {
   height: 21px;
   border: 2px solid #4059ad;
   box-shadow: 0 0 10px #4059ad;
   outline: none;
+}
+label{
+  font-size: 15pt;
+  color: #eff2f1;
+  text-shadow: 0.5px 0.5px gray;
+}
+
+.alerts {
+  grid-area: alerts;
+  align-self: flex-start;
+  margin: 0;
+}
+.alert {
+  min-width: 225px;
+  border-radius: 15px;
+  text-align: center;
+  color: #eff2f1;
+  text-shadow: 0.5px 0.5px gray;
+  padding:0 10px;
+}
+.alert-danger{
+  border: 1px solid red;
+  box-shadow: 0 0 10px 1px red;
+}
+.alert-success{
+  border: 1px solid green;
+  box-shadow: 0 0 10px 1px green;
 }
 
 .btn {
@@ -181,15 +217,10 @@ export default {
   color: #eff2f1;
   background-color: #4059ad;
   font-weight: bold;
-  box-shadow: 2px 3px 2px #eff2f1;
 }
-
-.registerLink {
-  grid-area: loginLink;
-  justify-self: center;
-  font-size: 14px;
+.btn:hover {
+  box-shadow: 0px 0px 8px 4px #eff2f1;
 }
-
 .buttons {
   display: flex;
   flex-direction: column;
@@ -199,21 +230,13 @@ export default {
   height: 80px;
 }
 
-.header {
-  text-decoration: underline;
-  grid-area: header;
+.registerLink {
+  grid-area: loginLink;
   justify-self: center;
+  font-size: 15px;
+  text-shadow: 0.5px 0.5px gray;
+  align-self: end;
 }
-.alerts {
-  grid-area: alerts;
-  align-self: flex-start;
-  margin: 0;
-}
-.alert {
-  font-size: 14px;
-  text-align: center;
-}
-
 a:link {
   color: #bcf7e5;
 }
@@ -223,22 +246,7 @@ a:visited {
 a:hover {
   color: #4059ad;
 }
-.alert-danger{
-  color: rgb(206, 0, 0);
-  border: 1px solid red;
-  box-shadow: 0 0 10px red;
-  padding:0 10px;
-}
-.alert-success{
-  color: green;
-  border: 1px solid green;
-  box-shadow: 0 0 10px green;
-  padding:0 10px;
-}
-label{
-  font-size: 14pt;
-  color: #eff2f1;
-}
+
 .invalid {
   background-color: #ffa8a8;
 }
