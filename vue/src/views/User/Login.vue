@@ -1,5 +1,5 @@
 <template>
-  <div id="login" class="text-center">
+  <div id="login" class="container">
     <form class="form-signin">
       <h1 class="header">Login</h1>
       <div class="inputs">
@@ -42,8 +42,8 @@
           </div>
         </div>
         <div class="buttons">
-          <br /><button class="btn" @click.prevent="validateForm() && login()">Log In</button>
-          <br /><button class="btn" @click.prevent="navToLanding()">Cancel</button>
+          <button class="btn" @click.prevent="validateForm() && login()">Log In</button>
+          <button class="btn" @click.prevent="navToLanding()">Cancel</button>
         </div>
       </div>
       <span class="registerLink"
@@ -111,7 +111,7 @@ export default {
 </script>
 
 <style scoped>
-.text-center {
+.container {
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
@@ -120,6 +120,8 @@ export default {
   align-items: center;
   background-color: #eff2f1;
   font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 0.5px 0.5px gray;
+
 }
 
 .form-signin {
@@ -133,10 +135,11 @@ export default {
   width: 320px;
   height: 450px;
   background-color: #ffd47d;
+  border: 1px #4059ad solid;
   border-radius: 10px;
   padding: 10px;
   color: #eff2f1;
-  box-shadow: 0px 0px 8px 2px #4059ad;
+  box-shadow: 2px 2px 8px 4px #4059ad;
 }
 
 .inputs {
@@ -161,13 +164,12 @@ export default {
   text-decoration: underline;
   grid-area: header;
   justify-self: center;
-  text-shadow: 0.5px 0.5px gray;
   cursor: default;
 }
 
 .form-signin input {
   height: 25px;
-  min-width: 250px;
+  min-width: 255px;
   font-size: 14px;
   border-radius: 5px;
   border: none;
@@ -182,7 +184,6 @@ export default {
 label{
   font-size: 15pt;
   color: #eff2f1;
-  text-shadow: 0.5px 0.5px gray;
 }
 
 .alerts {
@@ -195,7 +196,6 @@ label{
   border-radius: 15px;
   text-align: center;
   color: #eff2f1;
-  text-shadow: 0.5px 0.5px gray;
   padding:0 10px;
 }
 .alert-danger{
@@ -217,6 +217,7 @@ label{
   color: #eff2f1;
   background-color: #4059ad;
   font-weight: bold;
+  margin-top: 10px;
 }
 .btn:hover {
   box-shadow: 0px 0px 8px 4px #eff2f1;
@@ -234,7 +235,6 @@ label{
   grid-area: loginLink;
   justify-self: center;
   font-size: 15px;
-  text-shadow: 0.5px 0.5px gray;
   align-self: end;
 }
 a:link {

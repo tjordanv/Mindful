@@ -27,7 +27,8 @@
           <input type="number" class="input" oninput="this.className = 'input'"
           v-model="user.phone">
         </div>
-        <span class="spacer"></span>
+      </div>
+      <div class="tab" v-show="currentTab == 2">
         <div>
           <label>City   </label>
           <input type="text" class="input" oninput="this.className = 'input'" 
@@ -92,14 +93,14 @@
           </select>
         </div>
       </div>
-      <div class="tab" v-show="currentTab == 2">
+      <div class="tab" v-show="currentTab == 3">
         <div>
           <label>Personal Mission Statement</label>
-          <textarea class="input" cols="32" rows="10" oninput="this.className = 'input'"
+          <textarea class="input" cols="30" rows="5" oninput="this.className = 'input'"
           v-model="user.missionStatement" maxlength="250"></textarea>
         </div>
       </div>
-      <div class="tab" v-show="currentTab == 3">
+      <div class="tab" id="lastTab" v-show="currentTab == 4">
         <div><label>Username</label>
         <input
           type="text"
@@ -125,14 +126,18 @@
           v-model="user.confirmPassword"
         /></div>
       </div>
+        <div class="alert" v-show="registrationErrors">
+          {{ registrationErrorMsg }}
+      </div>
       <div class="buttons">
-          <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 3">Next</button>
-          <button class="saveBtn" @click.prevent="register()" v-if="currentTab == 3">Save</button>
+          <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 4">Next</button>
+          <button class="saveBtn" @click.prevent="register()" v-if="currentTab == 4">Save</button>
           <span class="spacer"></span>
           <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
           <button class="CancelBtn" @click.prevent="navToLanding()" v-if="currentTab == 0">Cancel</button>
       </div>
       <div class="progressTracker">
+        <span class="step"></span>
         <span class="step"></span>
         <span class="step"></span>
         <span class="step"></span>
@@ -143,17 +148,6 @@
         <router-link :to="{ name: 'login' }">Click here to login</router-link>
       </span>
     </form>
-    <div class="alerts" v-show="registrationErrors || passwordFailed">
-      <div class="alert" v-show="registrationErrors">
-        {{ registrationErrorMsg }}
-      </div>
-      <div class="alert" v-show="passwordFailed">
-        Password must contain at least:
-        8 Total Characters
-        1 Uppercase Letter
-        1 Number
-      </div>
-    </div>
   </div>
 </template>
 
@@ -175,11 +169,11 @@ export default {
         username: '',
         password: '',
         confirmPassword: '',
-        role: 'user',
+        role: 'USER',
       },
       passwordFailed: false,
       registrationErrors: false,
-      registrationErrorMsg: 'There were problems registering this user.',
+      registrationErrorMsg: '',
       currentTab: 0,
     };
   },
@@ -192,7 +186,7 @@ export default {
       if (this.validateForm(true)) {
         if (this.user.password != this.user.confirmPassword) {
           this.registrationErrors = true;
-          this.registrationErrorMsg = 'Password & Confirm Password do not match.';
+          this.registrationErrorMsg = 'Passwords must match.';
       } else if (this.passwordRequirements()) {
         authService
           .register(this.user)
@@ -208,11 +202,16 @@ export default {
             const response = error.response;
             this.registrationErrors = true;
             if (response.status === 400) {
-              this.registrationErrorMsg = 'Bad Request: Validation Errors';
+              this.registrationErrorMsg = 'There were problems registering this user.';
+            }
+            else {
+              this.registrationErrorMsg = 'Username already taken.';
             }
           });
       } else {
-        this.passwordFailed = true;
+          this.registrationErrors = true;
+          this.registrationErrorMsg = "Password must contain at least " +
+          "8 Characters, 1 Uppercase, 1 Number";
       }
     }
     },
@@ -274,13 +273,14 @@ export default {
 <style scoped>
 .container {
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas: "form"
-  "alerts";
   height: 100vh;
+  grid-template-columns: 1fr;
+  grid-template-areas: "form";
   justify-items: center;
   align-items: center;
   background-color: #eff2f1;
+  font-family: Arial, Helvetica, sans-serif;
+  text-shadow: 0.5px 0.5px gray;
 }
 .form-register {
   display: grid;
@@ -289,6 +289,7 @@ export default {
   grid-template-areas:
     "header"
     "inputs"
+    "alert"
     "buttons"
     "tracker"
     "loginLink";
@@ -298,29 +299,45 @@ export default {
   border-radius: 10px;
   padding: 10px;
   color: #eff2f1;
-  box-shadow: 5px 5px 5px #4059ad;
+  border: 1px #4059ad solid;
+  box-shadow: 2px 2px 8px 4px #4059ad;
 }
+
 .tab {
   grid-area: inputs;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  align-items: center;
   min-height: 100px;
-  margin: 0 0 0 30px;
+  margin: 50px 0 0 30px;
 }
+
 .header {
   text-decoration: underline;
   color: #eff2f1;
   grid-area: header;
   justify-self: center;
+  cursor: default;
+  margin-bottom: 0px
 }
+
+#lastTab {
+  margin-top: 0;
+}
+
 .form-register input, .form-register select {
   height: 25px;
-  min-width: 250px;
+  min-width: 255px;
   font-size: 14px;
-  border-radius: 4px;
+  border-radius: 5px;
   border: none;
+  margin-top: 5px;
+}
+.form-register textarea{
+  resize: none;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-top: 5px;
 }
 .form-register input:focus {
   height: 21px;
@@ -328,16 +345,62 @@ export default {
   box-shadow: 0 0 10px #4059ad;
   outline: none;
 }
-.invalid {
-  background-color: #ffa8a8;
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
-p {
+label {
+  font-size: 15pt;
+  color: #eff2f1;
+}
+
+.alert {
+  grid-area: alert;
+  color: red;
+  border: 1px solid red;
+  box-shadow: 0 0 10px 1px red;
+  padding:0 10px;
+  border-radius: 15px;
+  align-self: center;
+  max-width: 265px;
+  font-size: 15px;
   text-align: center;
+  color: #eff2f1;
+  justify-self: center;
+  margin-top: 10px;
 }
+
+.buttons {
+  grid-area: buttons;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 320px;
+  height: 80px;
+  margin-top: 15px;
+}
+button {
+  cursor: pointer;
+  min-height: 35px;
+  width: 100px;
+  font-size: 16px;
+  border-radius: 15px;
+  border: none;
+  color: #eff2f1;
+  background-color: #4059ad;
+  font-weight: bold;
+}
+button:hover {
+  box-shadow: 0px 0px 8px 4px #eff2f1;
+}
+
 .progressTracker {
   text-align: center;
+  align-self: end;
   grid-area: tracker;
-  margin: 5px 0 5px 0;
+  margin: 0;
 }
 .step {
   height: 20px;
@@ -355,56 +418,12 @@ p {
 .step.complete {
   background-color: green;
 }
-.buttons {
-  grid-area: buttons;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 320px;
-  height: 100px;
-}
-.spacer {
-    margin: 5px;
-  }
-button {
-  cursor: pointer;
-  min-height: 35px;
-  width: 100px;
-  font-size: 16px;
-  border-radius: 15px;
-  border: none;
-  color: #eff2f1;
-  background-color: #4059ad;
-  font-weight: bold;
-  box-shadow: 2px 3px 2px #eff2f1;
-}
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-label{
-  font-size: 14pt;
-  color: #eff2f1;
-}
-.alerts {
-  grid-area: alerts;
-  align-self: flex-start;
-  margin: 0;
-  color: rgb(206, 0, 0);
-  border: 1px solid red;
-  box-shadow: 0 0 10px red;
-  padding:0 10px;
-}
-.alert {
-  font-size: 14px;
-  text-align: center;
-}
+
 .loginLink {
   grid-area: loginLink;
   justify-self: center;
-  font-size: 14px;
+  font-size: 15px;
+  align-self: end;
 }
 a:link {
   color: #bcf7e5;
@@ -414,5 +433,12 @@ a:visited {
 }
 a:hover {
   color: #4059ad;
+}
+
+.invalid {
+  background-color: #ffa8a8;
+}
+.spacer {
+      margin: 5px;
 }
 </style>
