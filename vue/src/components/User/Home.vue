@@ -4,9 +4,8 @@
         <h2>Welcome Back, {{$store.state.userInfo.firstName}}!</h2>
     </div>
     <div class="quote">
-    <p>"{{quote.text}}"</p>
-    <h3>-{{quote.author}}</h3>
-    <button v-on:click="info">push me</button>
+        <p>"{{quote.text}}"</p>
+        <h3>-{{quote.author}}</h3>
     </div>
     <div class="progressHeader">
     <h2>This Week's Progress</h2>
@@ -53,22 +52,24 @@
     
         <div>
             <table>
-            <thead>
-              <tr>
-                <th>Goal</th>
-                <th>End Date</th>
-                <th>Target</th>
-                <th>Current Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key">
-                <td v-on:click="goToGoal(goal.goalId)">{{goal.summary}}</td>
-                <td v-on:click="goToGoal(goal.goalId)">{{goal.endDate}}</td>
-                <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
-                <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
-              </tr>
-            </tbody>
+                <caption>Pinned Goals</caption>
+                <thead>
+                <tr>
+                    <th>Goal</th>
+                    <th>End Date</th>
+                    <th>Target</th>
+                    <th>Current Score</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key">
+                    <td v-on:click="goToGoal(goal.goalId)">{{goal.summary}}</td>
+                    <td v-on:click="goToGoal(goal.goalId)">{{goal.endDate}}</td>
+                    <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
+                    <td v-if="goal.units !='dollars'" v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
+                    <td v-if="goal.units =='dollars'" v-on:click="goToGoal(goal.goalId)">$ {{goal.currentScore}}</td>
+                </tr>
+                </tbody>
           </table>
         </div>
     </div>

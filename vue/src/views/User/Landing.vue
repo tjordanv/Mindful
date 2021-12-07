@@ -2,19 +2,19 @@
   <div class="contain">
     <LandingHeader class="head"></LandingHeader>
     <Landing class="body"></Landing>
-    <LandingFooter class="footer"></LandingFooter>
+    <Footer class="footer"></Footer>
   </div>
 </template>
 
 <script>
 import LandingHeader from "../../components/Headers/LandingHeader.vue";
-import LandingFooter from "../../components/Footers/LandingFooter.vue";
+import Footer from "../../components/Footers/Footer.vue";
 import Landing from "../../components/User/Landing.vue";
 
 export default {
   components: {
     LandingHeader,
-    LandingFooter,
+    Footer,
     Landing
   }
 }

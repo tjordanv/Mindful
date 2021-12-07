@@ -1,6 +1,6 @@
 <template>
   <div>
-      <GoalsHeader></GoalsHeader>
+      <HomeHeader></HomeHeader>
       <Goals></Goals>
       <Footer></Footer>
   </div>
@@ -8,14 +8,14 @@
 
 <script>
 import Goals from "../../components/Goals/Goals.vue"
-import GoalsHeader from "../../components/Headers/GoalsHeader.vue"
+import HomeHeader from "../../components/Headers/HomeHeader.vue"
 import Footer from "../../components/Footers/Footer.vue"
 
 
 export default {
   components: {
     Goals,
-    GoalsHeader,
+    HomeHeader,
     Footer,
   }
 

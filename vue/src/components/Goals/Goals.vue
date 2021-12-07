@@ -5,31 +5,38 @@
             <caption>Your Goals</caption>
             <thead>
               <tr>
+                <th>Trends</th>
                 <th>Favorite</th>
                 <th>Goal</th>
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Target</th>
                 <th>Current Score</th>
-                <th></th>
+                <th>New Scores</th>
               </tr>
             </thead>
             <tbody>
               <tr class="goalRow" v-for="goal in goals" v-bind:key="goal.key">
+                <td><font-awesome-icon icon="angle-up" class="icon fa-3x"></font-awesome-icon></td>
                 <td class="checkboxCell"><input class="favCheckbox" type="checkbox" 
                 v-model="goal.favorite" v-on:click="favoriteGoal(goal)"></td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.summary}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.startDate}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.endDate}}</td>
                 <td v-on:click="goToGoal(goal.goalId)">{{goal.goal}}</td>
-                <td v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
+                <td v-if="goal.units != 'dollars'" v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
+                <td v-if="goal.units == 'dollars'" v-on:click="goToGoal(goal.goalId)">$ {{goal.currentScore}}</td>
                 <td class="newScoreCell"><button class="newScoreButton" v-on:click="moveTableAndForm('show'),
                 score.goalId = goal.goalId, score.goalMovement = goal.movement, score.goalIndex = goals.indexOf(goal),
                 scoreTitle = goal.summary, scoreUnit = goal.units">Add Score</button></td>
               </tr>
             </tbody>
             <tfoot class="newGoalCell">
-              <button class="newGoal"><router-link class="newGoalLink" :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link></button>
+              <tr>
+                <td colspan="8">
+                  <button class="newGoal"><router-link class="newGoalLink" :to="{name: 'newGoal'}" v-if="goals.length < 8">New Goal</router-link></button>
+                </td>
+              </tr>
             </tfoot>
           </table>
       </div>
@@ -218,7 +225,7 @@ export default {
   grid-template-columns: 1fr;
   grid-template-areas: "goals";
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   background-color: #eff2f1;
 }
 .goalsContainer {
@@ -239,13 +246,27 @@ caption {
   color: #ffd47d;
   font-weight: bold;
 }
-td:nth-child(7) {
+td:nth-child(8) {
   border-right: hidden;
   border-bottom: hidden;
 }
-th:nth-child(7) {
+td:nth-child(1) {
+  border-left: hidden;
+  border-bottom: hidden;
+    cursor: default; 
+  background-color:#eff2f1;
+}
+.icon {
+  color: green;
+}
+th:nth-child(8) {
   border-top: hidden;
   border-right: hidden;
+  border-bottom: hidden;
+}
+th:nth-child(1) {
+  border-top: hidden;
+  border-left: hidden;
   border-bottom: hidden;
 }
 td {
@@ -271,18 +292,13 @@ input {
 input[type=checkbox] {
   width: 20px;
 }
-.newScoreButton {
-  cursor: pointer;
-  border: none;
-  background-color: #4059ad;
-  color: #eff2f1;
-  border-radius: 10px;
-  font-size: 12pt;
-  height: 24px;
-}
 .newGoalCell {
   border-bottom: hidden;
   border-left:hidden;
+  border-right: hidden;
+  text-align: center;
+}
+.newGoalCell td {
   border-right: hidden;
 }
 .newGoal {
@@ -313,7 +329,7 @@ input[type=checkbox] {
   border: 2px solid #ffd47d;
 }
 .showScoreForm {
-  transform: translateX(300px);
+  transform: translateX(340px);
   transition: 1s;
 }
 .hideScoreForm {
@@ -369,5 +385,15 @@ span > input {
 .newScoreCell {
   cursor: default; 
   background-color:#eff2f1;
+}
+.newScoreButton {
+  cursor: pointer;
+  border: none;
+  background-color: #4059ad;
+  color: #eff2f1;
+  border-radius: 10px;
+  font-size: 12pt;
+  height: 24px;
+  margin: 0 0 0 10px;
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <div class="container">
+      <router-link class="back" :to="{name: 'goals'}">&lt; Back to Goals Page</router-link>
       <form class="newGoal">
+        <h1 class="header">New Goal</h1>
         <div class="tab" v-show="currentTab == 0">
             <p>Provide a brief summary of your goal, this should be a concise call to action. 
                 You can also think of this as a title or header!</p>
@@ -9,7 +11,7 @@
             <p>Take a moment to think a bit deeper about this goal and then provide a more detailed 
                 description below.  
             </p>
-            <p><textarea class="input" placeholder="Description" rows="3" maxlength="800"
+            <p><textarea class="input" placeholder="Description" rows="3" maxlength="300"
             v-model="newGoal.description" oninput="this.className = 'input'"></textarea></p> 
         </div>
         <div class="tab" v-show="currentTab == 1">
@@ -48,7 +50,6 @@
             <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 2">Next</button>
             <button class="submitBtn" @click.prevent="createNewGoal()" v-if="currentTab == 2">Save</button>
             <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
-            <button class="CancelBtn" @click.prevent="navToGoals" v-if="currentTab == 0">Cancel</button>
         </div>
         <div class="progressTracker">
             <span class="step"></span>
@@ -167,23 +168,51 @@ export default {
 
 <style scoped>
 .container {
-display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas: "newGoal";
-  width: 100%;
-  height: 100vh;
-  background-color: #eff2f1;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: "back"
+    "newGoal";
+    width: 100%;
+    height: 90vh;
+    background-color: #eff2f1;
+    justify-items: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+.back {
+    grid-area: back;
+    align-self: end;
+    margin: 0 250px 10px 0;
 }
 .newGoal {
-    width: 500px;
-    height: 400px;
-    margin-top: 5%;
+    width: 400px;
+    height: 450px;
     grid-area: newGoal;
-    justify-self: center;
     background-color: #ffd47d;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+    "header"
+    "inputs"
+    "buttons"
+    "tracker";
+    align-self: start;
+    border: 1px #4059ad solid;
+    box-shadow: 2px 2px 8px 4px #4059ad;
+    border-radius: 10px;
+    padding: 10px;
+}
+.tab {
+    grid-area: inputs;
+}
+.header {
+  text-decoration: underline;
+  color: #eff2f1;
+  grid-area: header;
+  justify-self: center;
+  cursor: default;
+  margin-bottom: 0px
 }
 input[type=text] {
     width: 90%;
@@ -205,6 +234,7 @@ p {
 }
 .progressTracker {
     text-align: center;
+    grid-area: tracker;
 }
 .step {
     height: 20px;
@@ -223,16 +253,36 @@ p {
     background-color: green;
 }
 .buttons {
-    align-self: center;
+    grid-area: buttons;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 400px;
+    height: 80px;
 }
 button {
-    margin: 0 10px;
+    margin-bottom: 10px;
     cursor: pointer;
+    min-height: 35px;
+    width: 100px;
+    font-size: 16px;
+    border-radius: 15px;
     border: none;
-    background-color: #4059ad;
     color: #eff2f1;
-    border-radius: 10px;
-    font-size: 12pt;
-    height: 24px;
+    background-color: #4059ad;
+    font-weight: bold;
+}
+button:hover {
+    box-shadow: 0px 0px 8px 4px #eff2f1;
+}
+a:link {
+  color: #bcf7e5;
+}
+a:visited {
+  color: #8dbee9;
+}
+a:hover {
+  color: #4059ad;
 }
 </style>
