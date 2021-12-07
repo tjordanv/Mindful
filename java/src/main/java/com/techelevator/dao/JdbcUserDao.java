@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.techelevator.model.User;
 
 @Service
-public class JdbcUserDao implements UserDao {
+public class JdbcUserDao implements UserDao<User> {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -26,46 +26,30 @@ public class JdbcUserDao implements UserDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
-    public int findIdByUsername(String username) {
-        return jdbcTemplate.queryForObject("select user_id from users where username = ?", int.class, username);
-    }
-
-    @Override
-    public User getUserByUsername(Principal principal) {
-        String username = principal.getName();
-        String sql = "SELECT * FROM users WHERE username = ?";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
-        if(results.next()) {
-            return mapRowToUser(results, false);
-        } else {
-            throw new RuntimeException("userId "+username+" was not found.");
-        }
-    }
 
 	@Override
-	public User getByCriteria(String criteria, Object criteriaValue) {
-		String sql = String.format("SELECT * FROM users WHERE %s = ?", criteria);
-		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, criteriaValue);
+	public User getByUsername(String username) {
+		String sql = "SELECT * FROM users WHERE username = ?";
+		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
 		if(results.next()) {
 			return mapRowToUser(results, false);
 		} else {
-			throw new RuntimeException(criteria + " " + criteriaValue + " was not found.");
+			throw new RuntimeException(username + " was not found.");
 		}
 	}
 
     @Override
-    public User getAllByCriteria(String criteria, Object criteriaValue) {
-        String sql = String.format("SELECT users.user_id, username, password_hash, role, city, state, email, phone, " +
+    public User getAllByUsername(String username) {
+        String sql = "SELECT users.user_id, username, password_hash, role, city, state, email, phone, " +
                 "first_name, last_name, join_date, termination_date, mission_statement" +
                 " FROM users JOIN user_info ON users.user_id = user_info.user_id" +
                 " JOIN user_contact ON user_info.user_id = user_contact.user_id" +
-                " WHERE %s = ?", criteria);
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, criteriaValue);
+                " WHERE username = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
         if(results.next()) {
             return mapRowToUser(results, true);
         } else {
-            throw new RuntimeException(criteria + " " + criteriaValue + " was not found.");
+            throw new RuntimeException(username + " was not found.");
         }
     }
 
@@ -84,19 +68,8 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public User findByUsername(String username) throws UsernameNotFoundException {
-        for (User user : this.findAll()) {
-            if(user.getUsername().toLowerCase().equals(username.toLowerCase())) {
-                return user;
-            }
-        }
-        throw new UsernameNotFoundException("User " + username + " was not found.");
-    }
-
-    @Override
-    public boolean create(Object newObject) {
+    public boolean create(User newUser) {
         boolean userCreated = false;
-        RegisterUserDTO newUser = (RegisterUserDTO) newObject;
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -109,7 +82,7 @@ public class JdbcUserDao implements UserDao {
         String insertUserContact = "INSERT INTO user_contact (user_id, city, state, email, phone) " +
                 "VALUES (?, ?, ?, ?, ?)";
         String password_hash = new BCryptPasswordEncoder().encode(newUser.getPassword());
-        String ssRole = "ROLE_" + newUser.getRole();
+        String ssRole = "ROLE_USER";
 
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         String id_column = "user_id";

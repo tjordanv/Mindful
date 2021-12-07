@@ -22,7 +22,6 @@ public class JdbcGoalDao implements GoalDao{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private Integer newGoalId = 0;
 
     @Override
     public List<Goal> getGoalsByUserId(Principal principal) {
@@ -38,13 +37,19 @@ public class JdbcGoalDao implements GoalDao{
     }
 
     @Override
-    public boolean createGoal(Goal goal) {
-        Goal newGoal = new Goal();
+    public int create(Goal goal) {
         String sql = "INSERT INTO goals (user_id, summary, description, goal, movement, units, " +
-                "start_date, end_date, active, favorite) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING goal_id";
-        this.newGoalId = jdbcTemplate.queryForObject(sql, Integer.class, goal.getUserId(), goal.getSummary(), goal.getDescription(),
-        goal.getGoal(), goal.getMovement(), goal.getUnits(), goal.getStartDate(), goal.getEndDate(), goal.isActive(), false);
-        return this.newGoalId != 0;
+                "start_date, end_date, active, favorite, visibility) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING goal_id";
+        int newGoalId = jdbcTemplate.queryForObject(sql, Integer.class, goal.getUserId(), goal.getSummary(), goal.getDescription(),
+        goal.getGoal(), goal.getMovement(), goal.getUnits(), goal.getStartDate(), goal.getEndDate(), goal.isActive(), false, goal.getVisibility());
+
+        return newGoalId;
+    }
+
+    @Override
+    public void terminateGoal(int goalId) {
+        String sql = "UPDATE goals set early_termination = true, active = false WHERE goal_id = ?";
+        jdbcTemplate.update(sql, goalId);
     }
 
     @Override
@@ -93,7 +98,7 @@ public class JdbcGoalDao implements GoalDao{
 
             if (goal.isActive() && goalEndDateInt < dateInt) {
                 updateGoalActiveStatus(goal.getGoalId(), false);
-            } else if (!goal.isActive() && goalStartDateInt <= dateInt && dateInt <=goalEndDateInt) {
+            } else if ((!goal.isActive() && !goal.isEarlyTermination()) && (goalStartDateInt <= dateInt && dateInt <=goalEndDateInt)) {
                 updateGoalActiveStatus(goal.getGoalId(), true);
                 filteredGoals.add(goal);
             } else if (goal.isActive()) {
@@ -116,8 +121,9 @@ public class JdbcGoalDao implements GoalDao{
         goal.setStartDate(rowSet.getDate("start_date"));
         goal.setEndDate(rowSet.getDate("end_date"));
         goal.setActive(rowSet.getBoolean("active"));
+        goal.setEarlyTermination(rowSet.getBoolean("early_termination"));
         goal.setFavorite(rowSet.getBoolean("favorite"));
-        goal.setCurrentScore(0);
+        goal.setVisibility(rowSet.getInt("visibility"));
         return goal;
     }
 }

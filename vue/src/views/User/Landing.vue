@@ -1,21 +1,41 @@
 <template>
-  <div>
-    <nav>
-      <router-link v-bind:to="{name: 'logout'}" v-if="$store.state.token != ''">Logout</router-link>
-      <router-link v-bind:to="{name: 'login'}" v-if="$store.state.token == ''">Login</router-link> | 
-      <router-link v-bind:to="{name: 'register'}" v-if="$store.state.token == ''">Register</router-link>
-      <router-link v-bind:to="{name: 'home'}" v-if="$store.state.token != ''">Home</router-link>
-    </nav>
-
+  <div class="contain">
+    <LandingHeader class="head"></LandingHeader>
+    <Landing class="body"></Landing>
+    <LandingFooter class="footer"></LandingFooter>
   </div>
 </template>
 
 <script>
-export default {
+import LandingHeader from "../../components/Headers/LandingHeader.vue";
+import LandingFooter from "../../components/Footers/LandingFooter.vue";
+import Landing from "../../components/User/Landing.vue";
 
+export default {
+  components: {
+    LandingHeader,
+    LandingFooter,
+    Landing
+  }
 }
 </script>
 
-<style>
-
+<style scoped>
+.contain {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-areas: 
+  "header"
+  "body"
+  "footer";
+}
+.head {
+  grid-area: header;
+}
+.body {
+  grid-area: body;
+}
+.footer {
+  grid-area: footer;
+}
 </style>

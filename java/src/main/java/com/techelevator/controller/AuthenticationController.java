@@ -47,7 +47,7 @@ public class AuthenticationController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = tokenProvider.createToken(authentication, false);
         
-        User user = (User) userDao.getByCriteria("username", loginDto.getUsername());
+        User user = (User) userDao.getByUsername(loginDto.getUsername());
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
@@ -58,17 +58,17 @@ public class AuthenticationController {
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public void register(@Valid @RequestBody RegisterUserDTO newUser) {
         try {
-            User user = (User) userDao.getByCriteria("username", newUser.getUsername());
+            User user = (User) userDao.getByUsername(newUser.getUsername());
             System.out.println(user);
             throw new UserAlreadyExistsException();
-        } catch (UsernameNotFoundException e) {
+        } catch (RuntimeException e) {
             userDao.create(newUser);
         }
     }
 
     @RequestMapping(value = "/login/user-info", method=RequestMethod.GET)
     public User getUserInfo(Principal principal) {
-        User user = (User) userDao.getAllByCriteria("username", principal.getName());
+        User user = (User) userDao.getAllByUsername(principal.getName());
         return user;
     }
 

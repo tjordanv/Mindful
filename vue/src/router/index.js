@@ -12,6 +12,9 @@ import Goals from "../views/Goals/Goals.vue"
 import NewGoal from "../views/Goals/NewGoal.vue"
 import GoalDetails from "../views/Goals/GoalDetails.vue"
 import Community from "../views/Community/Community.vue"
+import Contact from "../views/Information/Contact.vue"
+import About from "../views/Information/About.vue"
+import Assistance from "../views/Information/Assistance.vue"
 
 Vue.use(Router)
 
@@ -114,6 +117,30 @@ const router = new Router({
       component: Community,
       meta: {
         requiresAuth: true
+      }
+    },
+    {
+      path: "/about",
+      name: "about",
+      component: About,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: "/contact",
+      name: "contact",
+      component: Contact,
+      meta: {
+        requiresAuth: false
+      }
+    },
+    {
+      path: "/assistance",
+      name: "assistance",
+      component: Assistance,
+      meta: {
+        requiresAuth: false
       }
     },
   ]

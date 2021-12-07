@@ -13,16 +13,13 @@ public class Goal {
     private Date startDate;
     private Date endDate;
     private boolean active;
-    private int currentScore;
+    private boolean earlyTermination;
     private boolean favorite;
+    private int visibility;
+    private int currentScore;
 
-    public boolean isFavorite() {
-        return favorite;
-    }
+    public Goal() {}
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
-    }
 
     public int getCurrentScore() {
         return currentScore;
@@ -32,8 +29,21 @@ public class Goal {
         this.currentScore = currentScore;
     }
 
-    public Goal() {}
+    public boolean isFavorite() {
+        return favorite;
+    }
 
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public int getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(int visibility) {
+        this.visibility = visibility;
+    }
 
     public int getGoalId() {
         return goalId;
@@ -113,5 +123,13 @@ public class Goal {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isEarlyTermination() {
+        return earlyTermination;
+    }
+
+    public void setEarlyTermination(boolean earlyTermination) {
+        this.earlyTermination = earlyTermination;
     }
 }

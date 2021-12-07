@@ -58,11 +58,17 @@
 <script>
 import GoalService from "../../services/GoalService.js";
 import ScoreService from "../../services/ScoreService.js";
+import TotalScoreService from '../../services/TotalScoreService.js';
 
 export default {
   data() {
     return {
       goals: [],
+      totalScore: {
+        goalId: "",
+        scoreCount: "",
+        score: ""
+      },
       currentDate: "",
       score: {},
       scoreTitle: "",
@@ -81,108 +87,10 @@ export default {
 
     this.currentDate = this.$store.state.currentDate; 
 
-    GoalService.getAndCheckGoals().then(
-      (response) => {
-        this.goals = response.data
-        this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
-        if (this.$store.state.favoriteGoals === "") {
-          this.$store.commit("UPDATE_FAVORITE_GOALS", this.goals.length);
-          this.goals.forEach(goal => {
-            if (goal.favorite != true) {
-              this.$store.commit("INCREMENT_FAVORITE_GOALS", -1);
-            }
-          })
-        }
-        this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
-          (response) => {
-            let currentScore = 0;
-            let currentTime = [0, 0];
-            goal.totalScores = response.data.length;
-            response.data.forEach(scores => {
-              if (goal.units != 'time') {
-                currentScore += scores.score;
-                goal.currentScore = currentScore;
-              } else {
-                  let scoreStr = "";
-                  scoreStr = scores.score.toString();
-                  if (scores.score < 1000) {
-                  scoreStr = '0' + scoreStr;
-                  }
-                  scoreStr = scoreStr.split('');
-                  scoreStr = [scoreStr[0] + scoreStr[1], scoreStr[2] + scoreStr[3]]
-                  currentTime[0] += Number(scoreStr[0]);
-                  currentTime[1] += Number(scoreStr[1]);
-                  goal.currentScore = currentTime;
-              }
-            })
-            if (goal.movement == 'average up' || goal.movement == 'average down') {
-              if (goal.units != 'time') {
-                let tempScore = (goal.currentScore / response.data.length);
-                goal.currentScore = tempScore.toFixed(2);
-              } else {
-                  let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
-                  goal.currentTime = minutes;
-                  minutes /= response.data.length;
-                  let amPm = minutes < 720 ? 'AM' : 'PM';
-                  minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
-                  if (minutes[1] < 10) {
-                    minutes[1] = "0" + minutes[1].toString()
-                  }
-                  goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
-              }
-            }
-          }
-        )
-        )
-      });
+    this.loadActiveGoals();
   },
   beforeMount() {
-    GoalService.getAndCheckGoals().then(
-      (response) => {
-        this.goals = response.data
-        this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
-        this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
-          (response) => {
-            let currentScore = 0;
-            let currentTime = [0, 0];
-            goal.totalScores = response.data.length;
-            response.data.forEach(scores => {
-              if (goal.units != 'time') {
-                currentScore += scores.score;
-                goal.currentScore = currentScore;
-              } else {
-                  let scoreStr = "";
-                  scoreStr = scores.score.toString();
-                  if (scores.score < 1000) {
-                  scoreStr = '0' + scoreStr;
-                  }
-                  scoreStr = scoreStr.split('');
-                  scoreStr = [scoreStr[0] + scoreStr[1], scoreStr[2] + scoreStr[3]]
-                  currentTime[0] += Number(scoreStr[0]);
-                  currentTime[1] += Number(scoreStr[1]);
-                  goal.currentScore = currentTime;
-            }
-            })
-            if (goal.movement == 'average up' || goal.movement == 'average down') {
-              if (goal.units != 'time') {
-                let tempScore = (goal.currentScore / response.data.length);
-                goal.currentScore = tempScore.toFixed(2);
-              } else {
-                  let minutes = (goal.currentScore[0] * 60) + goal.currentScore[1];
-                  goal.currentTime = minutes;
-                  minutes /= response.data.length;
-                  let amPm = minutes < 720 ? 'AM' : 'PM';
-                  minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
-                  if (minutes[1] < 10) {
-                    minutes[1] = "0" + minutes[1].toString()
-                  }
-                  goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
-              }
-            }
-          }
-        )
-        )
-      });
+    this.loadActiveGoals();
   },
   methods: {
     goToGoal(goalId) {
@@ -198,7 +106,7 @@ export default {
         this.$store.commit("INCREMENT_FAVORITE_GOALS", 1);
         GoalService.updateFavoriteStatus(goal.goalId, favStatus);
       } else {
-        // TODO: place a constrain that limits users to chosing 3 favorite goals.
+        // TODO: place a constrain that limits users to choosing 3 favorite goals.
           this.goals.forEach(storedGoal => {
           if (storedGoal.goalId == goal.goalId) {
             storedGoal.favorite = false;
@@ -209,10 +117,12 @@ export default {
       }
     },
     saveScore(score) {
+      // committing new score to the database
       if (this.scoreUnit != 'time') { 
         let newScore = {goalId: score.goalId, date: score.date, score: score.score, notes: score.note};
         ScoreService.createScore(newScore);
       } else {
+          // formats time value into an integer value to fit database column requirements
           let currentTime = score.score.split(":");
           currentTime = currentTime[0] + currentTime[1];
           currentTime = Number(currentTime)
@@ -220,25 +130,68 @@ export default {
           ScoreService.createScore(newScore);
       }
 
+      // updating non-time total score in database in accordance with goal movement.
       let goal = this.goals[score.goalIndex]
       if (goal.units != 'time') {
         if (goal.movement == 'total up' || goal.movement == 'total down') {
           goal.currentScore = Number(goal.currentScore) + Number(score.score);
+          this.totalScore.score = goal.currentScore;
       } else if (goal.movement == 'average up' || goal.movement == 'average down') {
-          let tempScore = ( (Number(goal.currentScore) * goal.totalScores) + Number(score.score)) / (goal.totalScores + 1);
+          let tempScore = ((Number(goal.currentScore) * goal.scoreCount) + Number(score.score)) / (goal.scoreCount + 1);
           goal.currentScore = tempScore.toFixed(2);
+          this.totalScore.score = goal.currentScore;
       }
-      } else {
+      }
+      // formatting time values to update total score in database. assuming these 
+      // time values are always averaging up or down.
+      else {
           let newTime = score.score.split(":");
           newTime = (newTime[0] * 60) + Number(newTime[1]);
-          let minutes = (goal.currentTime + newTime) / (goal.totalScores + 1);
+          let minutes = ((goal.currentTime * goal.scoreCount) + newTime) / (goal.scoreCount + 1);
           let amPm = minutes < 720 ? 'AM' : 'PM';
+          this.totalScore.score = minutes;
           minutes = [Math.trunc(minutes / 60), Math.trunc(minutes % 60)]
           if (minutes[1] < 10) {
             minutes[1] = "0" + minutes[1].toString()
           }
           goal.currentScore = `${minutes[0]}:${minutes[1]} ${amPm}`
       }
+      this.totalScore.goalId = score.goalId;
+      TotalScoreService.updateTotalScore(this.totalScore);
+    },
+    loadActiveGoals() {
+      // validate current and future goals by date
+      GoalService.getAndCheckGoals().then(
+        (response) => {
+          this.goals = response.data
+          this.$store.commit("UPDATE_ACTIVE_GOALS", this.goals.length);
+          // Updating the favorite goals count
+          if (this.$store.state.favoriteGoals === "") {
+            this.$store.commit("UPDATE_FAVORITE_GOALS", this.goals.length);
+            this.goals.forEach(goal => {
+            if (goal.favorite != true) {
+              this.$store.commit("INCREMENT_FAVORITE_GOALS", -1);
+            }
+          })
+        }
+        }).finally(() => {
+        // updating current score
+        this.goals.forEach(
+          goal => TotalScoreService.getScoreByGoalId(goal.goalId).then(
+            (response) => {
+              goal.currentScore = response.data[0].score;
+              goal.scoreCount = response.data[0].scoreCount;
+              // formatting score of time based goals
+              if (goal.units == 'time') {
+                goal.currentTime = goal.currentScore;
+                let amPm = goal.currentScore < 720 ? 'AM' : 'PM';
+                let minutes = Math.trunc(goal.currentScore % 60);
+                let hours = Math.trunc(goal.currentScore / 60);
+                goal.currentScore = `${hours}:${minutes} ${amPm}`;
+              }
+            }
+          ))
+        })
     },
     print(goal) {
       console.log(goal)

@@ -1,5 +1,6 @@
 <template>
   <div id="login" class="container">
+    <router-link class="back" :to="{name: 'landing'}">&lt; Back to Home Page</router-link>
     <form class="form-signin">
       <h1 class="header">Login</h1>
       <div class="inputs">
@@ -43,15 +44,17 @@
         </div>
         <div class="buttons">
           <button class="btn" @click.prevent="validateForm() && login()">Log In</button>
-          <button class="btn" @click.prevent="navToLanding()">Cancel</button>
         </div>
       </div>
-      <span class="registerLink"
-        >Don't have an account?
-        <router-link :to="{ name: 'register' }"
-          >Click here to register</router-link
-        >
+      <div class="links">
+
+      <span class="link">Don't have an account?
+        <router-link :to="{ name: 'register' }">Click here to register</router-link>
       </span>
+      <span class="link">Having trouble?
+        <router-link :to="{ name: 'assistance' }">Click here for assistance</router-link>
+      </span>
+      </div>
     </form>
     
   </div>
@@ -115,7 +118,8 @@ export default {
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
-  grid-template-areas: "form";
+  grid-template-areas: "back"
+  "form";
   justify-items: center;
   align-items: center;
   background-color: #eff2f1;
@@ -123,7 +127,11 @@ export default {
   text-shadow: 0.5px 0.5px gray;
 
 }
-
+.back {
+  grid-area: back;
+  align-self: end;
+  margin: 0 175px 10px 0;
+}
 .form-signin {
   display: grid;
   grid-area: form;
@@ -131,7 +139,7 @@ export default {
   grid-template-areas:
     "header"
     "inputs"
-    "loginLink";
+    "links";
   width: 320px;
   height: 450px;
   background-color: #ffd47d;
@@ -140,6 +148,7 @@ export default {
   padding: 10px;
   color: #eff2f1;
   box-shadow: 2px 2px 8px 4px #4059ad;
+  align-self: start;
 }
 
 .inputs {
@@ -231,11 +240,15 @@ label{
   height: 80px;
 }
 
-.registerLink {
-  grid-area: loginLink;
-  justify-self: center;
-  font-size: 15px;
+.links {
+  grid-area: links;
   align-self: end;
+}
+.link {
+  display: block;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 5px;
 }
 a:link {
   color: #bcf7e5;

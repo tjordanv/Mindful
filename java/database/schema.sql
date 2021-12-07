@@ -83,6 +83,7 @@ CREATE TABLE goals (
 	start_date date NOT NULL, 
 	end_date date NOT NULL,
 	active boolean NOT NULL,
+	early_termination boolean NOT NULL,
 	favorite boolean DEFAULT false NOT NULL,
 	visibility int DEFAULT 0 NOT NULL,
 
@@ -91,13 +92,13 @@ CREATE TABLE goals (
 );
 
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES 
-(2, 'my weight', 'how much do I weigh each day when I wake up? I want to lose weight', 200, 'average down', 'pounds', '2021-11-01', '2021-12-01', true);
+(2, 'my weight', 'how much do I weigh each day when I wake up? I want to lose weight', 200, 'average down', 'pounds', '2021-11-01', '2021-12-01', false, true);
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES 
-(2, 'money', 'cash is king, I need to stack this paper', 20000, 'total up', 'dollars', '2021-10-01', '2021-12-21', true);
+(2, 'money', 'cash is king, I need to stack this paper', 20000, 'total up', 'dollars', '2021-10-01', '2021-12-21', false, true);
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES
-(2, 'student debt', 'I want to pay off all of this student debt', 0, 'total down', 'dollars', '2021-03-01', '2021-04-20', false);
+(2, 'student debt', 'I want to pay off all of this student debt', 0, 'total down', 'dollars', '2021-03-01', '2021-04-20', false, false);
 INSERT INTO goals (user_id, summary, description, goal, movement, units, start_date, end_date, active) VALUES 
-(2, 'Wake up time', 'the early bird gets the worm right?', 0545, 'average down', 'time', '2021-11-01', '2021-12-19', true);
+(2, 'Wake up time', 'the early bird gets the worm right?', 0545, 'average down', 'time', '2021-11-01', '2021-12-19', false, true);
 
 CREATE TABLE default_goal_visibility (
 	id serial NOT NULL,
@@ -138,6 +139,11 @@ CREATE TABLE goal_total_score (
 	CONSTRAINT PK_goal_total_score PRIMARY KEY (total_id),
 	CONSTRAINT FK_goal_total_score_goal FOREIGN KEY (goal_id) REFERENCES goals (goal_id)
 );
+
+INSERT INTO goal_total_score (goal_id, score_count, score) VALUES (1, 1, 210);
+INSERT INTO goal_total_score (goal_id, score_count, score) VALUES (2, 3, 575);
+INSERT INTO goal_total_score (goal_id, score_count, score) VALUES (3, 2, 1100);
+INSERT INTO goal_total_score (goal_id, score_count, score) VALUES (4, 1, 630);
 
 CREATE TABLE shared_goals (
 	shared_goal_id serial NOT NULL,

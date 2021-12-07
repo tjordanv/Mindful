@@ -27,8 +27,10 @@ public class GoalController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/new-goal")
-    public void createGoal(@RequestBody Goal newGoal) {
-        goalDao.createGoal(newGoal);
+    public @ResponseBody int create(@RequestBody Goal newGoal) {
+        int goalId = goalDao.create(newGoal);
+
+        return goalId;
     }
 
     @PutMapping("/update-active-status/{goalId}/{activeStatus}")
@@ -49,5 +51,10 @@ public class GoalController {
     @GetMapping(value = "/get-and-check-goals")
     public List<Goal> getAndCheckGoals(Principal principal) {
         return goalDao.getAndCheckGoal(principal);
+    }
+
+    @PutMapping("/goal-early-termination/{goalId}")
+    public void terminateGoal(@PathVariable int goalId) {
+        goalDao.terminateGoal(goalId);
     }
 }

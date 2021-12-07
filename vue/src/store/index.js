@@ -21,12 +21,18 @@ export default new Vuex.Store({
     token: currentToken || '',
     user: currentUser || {},
     userInfo: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
       username: "",
       userId: "",
+      role: "",
+      city: "",
+      state: "",
+      email: "",
+      phone: "",
+      firstName: "",
+      lastName: "",
+      joinDate: "",
+      terminationDate: "",
+      missionStatement: ""
     },
     currentDate: "",
     activeGoals: "",
@@ -50,8 +56,8 @@ export default new Vuex.Store({
     UPDATE_ACTIVE_GOALS(state, activeGoals) {
       state.activeGoals = activeGoals;
     },
-    INCREMENT_ACTIVE_GOALS(state) {
-      state.activeGoals ++;
+    INCREMENT_ACTIVE_GOALS(state, movement) {
+      state.activeGoals += movement;
     },
     UPDATE_FAVORITE_GOALS(state, favoriteGoals) {
       state.favoriteGoals = 0;
@@ -61,12 +67,18 @@ export default new Vuex.Store({
       state.favoriteGoals += movement;
     },
     SET_USER_INFO(state, userInfo) {
-      state.userInfo.firstName = userInfo.firstName;
-      state.userInfo.lastName = userInfo.lastName;
-      state.userInfo.email = userInfo.email;
-      state.userInfo.phone = userInfo.phone;
       state.userInfo.username = userInfo.username;
       state.userInfo.userId = userInfo.id;
+      state.userInfo.role = userInfo.authorities;
+      state.userInfo.city = userInfo.city;
+      state.userInfo.state = userInfo.state;
+      state.userInfo.email = userInfo.email;
+      state.userInfo.phone = userInfo.phone;
+      state.userInfo.firstName = userInfo.firstName;
+      state.userInfo.lastName = userInfo.lastName;
+      state.userInfo.joinDate = userInfo.joinDate;
+      state.userInfo.terminationDate = userInfo.terminationDate;
+      state.userInfo.missionStatement = userInfo.missionStatement;
     },
     LOGOUT(state) {
       localStorage.removeItem('token');

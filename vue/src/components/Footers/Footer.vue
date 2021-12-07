@@ -1,5 +1,7 @@
 <template>
-  <router-link :to="{name: 'logout'}">Logout</router-link>
+  <nav>
+    <router-link :to="{name: 'logout'}">Logout</router-link>
+  </nav>
 </template>
 
 <script>

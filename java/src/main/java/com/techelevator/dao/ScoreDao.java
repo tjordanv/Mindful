@@ -2,10 +2,10 @@ package com.techelevator.dao;
 
 import com.techelevator.model.Score;
 
-import java.util.Date;
 import java.util.List;
 
-public interface ScoreDao {
-    List<Score> getScoresByGoalId(int goalId);
-    void createScore(Score score);
+public interface ScoreDao <T>{
+    List<T> getScoresByGoalId(int goalId);
+    void createScore(T score);
+    void updateScore(T score);
 }

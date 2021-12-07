@@ -13,7 +13,8 @@
     </div>      
     <div class="progressContent">
         <div class="progressCalendar">
-            <span class="fa-stack">
+            <h3>COMING SOON!</h3>
+        <!--<span class="fa-stack">
                 <font-awesome-icon icon="calendar" class="fa-5x fa-stack-1x"/>
                 <font-awesome-icon icon="check" class="fa-3x fa-stack-1x" v-if="weeksProgress.sunday.entry"/>
                 <font-awesome-icon icon="times" class="fa-3x fa-stack-1x" v-if="weeksProgress.sunday.entry == false"/>
@@ -47,8 +48,8 @@
                 <font-awesome-icon icon="calendar" class="fa-5x fa-stack-1x"/>
                 <font-awesome-icon icon="check" class="fa-3x fa-stack-1x" v-if="weeksProgress.saturday.entry"/>
                 <font-awesome-icon icon="times" class="fa-3x fa-stack-1x" v-if="weeksProgress.saturday.entry == false"/>
-            </span>
-        </div>
+            </span> --> 
+        </div> 
     
         <div>
             <table>
@@ -78,7 +79,7 @@
 import AuthService from "../../services/AuthService.js";
 import QuoteService from "../../services/QuoteService.js";
 import GoalService from "../../services/GoalService.js";
-import ScoreService from "../../services/ScoreService.js";
+import TotalScoreService from "../../services/TotalScoreService.js";
 
 export default {
     components: {},
@@ -118,7 +119,6 @@ export default {
         AuthService.getUserInfo().then(response => {
               this.$store.commit("SET_USER_INFO", response.data);
         })
-        console.log(this.$store.state.userInfo)
 
         if (this.$store.state.currentDate === "") {
             this.$store.commit("SET_CURRENT_DATE");
@@ -131,16 +131,22 @@ export default {
             }
         )
 
+        // getting the users pinned goals
         GoalService.getAndCheckGoals().then(
             (response) => {
                 this.goals = response.data
                 this.goals = this.goals.filter(goal => goal.favorite)
                 this.$store.commit("UPDATE_FAVORITE_GOALS", this.goals.length);
-                this.goals.forEach(goal => ScoreService.getScoresByGoalId(goal.goalId).then(
+                this.goals.forEach(goal => TotalScoreService.getScoreByGoalId(goal.goalId).then(
                     (response) => {
-                        let currentScore = 0;
-                        response.data.forEach(scores => currentScore += scores.score);
-                        goal.currentScore = currentScore;
+                        goal.currentScore = response.data[0].score;
+                        // formatting score of time based goals
+                        if (goal.units == 'time') {
+                            let amPm = goal.currentScore < 720 ? 'AM' : 'PM';
+                            let minutes = Math.trunc(goal.currentScore % 60);
+                            let hours = Math.trunc(goal.currentScore / 60);
+                            goal.currentScore = `${hours}:${minutes} ${amPm}`;
+                        }
                     }   
                 )
             )

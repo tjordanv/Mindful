@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="06e60e10-f959-4ad1-a372-29aa2cbb2143" name="Default Changelist" comment="" />
+    <list default="true" id="06e60e10-f959-4ad1-a372-29aa2cbb2143" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcTotalScoreDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/model/TotalScore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/database/schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/java/database/schema.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/controller/AuthenticationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/controller/AuthenticationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/controller/GoalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/controller/GoalController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/controller/ScoreController.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/controller/ScoreController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/GoalDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/GoalDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcGoalDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcGoalDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcScoreDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcScoreDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcUserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/JdbcUserDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/ScoreDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/ScoreDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/dao/UserDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/model/Goal.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/model/Goal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/main/java/com/techelevator/security/UserModelDetailsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/main/java/com/techelevator/security/UserModelDetailsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/java/src/test/java/com/techelevator/dao/JdbcUserDaoTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/java/src/test/java/com/techelevator/dao/JdbcUserDaoTests.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/components/Goals/Goals.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/components/Goals/Goals.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/components/Goals/NewGoal.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/components/Goals/NewGoal.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/services/GoalService.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/services/GoalService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue/src/views/User/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue/src/views/User/Register.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

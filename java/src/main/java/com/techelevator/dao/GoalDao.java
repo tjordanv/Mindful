@@ -8,9 +8,10 @@ import java.util.List;
 
 public interface GoalDao {
     List<Goal> getGoalsByUserId(Principal principal);
-    boolean createGoal(Goal goal);
+    int create(Goal goal);
+    void terminateGoal(int goalId);
     void updateGoalActiveStatus(int goalId, boolean activeStatus);
-    public void updateGoalFavoriteStatus(int goalId, boolean favoriteStatus);
+    void updateGoalFavoriteStatus(int goalId, boolean favoriteStatus);
     Goal getGoalByGoalId(int goalId) throws Exception;
     List<Goal> getAndCheckGoal(Principal principal);
 }

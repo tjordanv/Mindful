@@ -1,5 +1,6 @@
 <template>
   <div id="register" class="container">
+    <router-link class="back" :to="{name: 'landing'}">&lt; Back to Home Page</router-link>
     <form class="form-register">
       <h1 class="header">Create Account</h1>
       <div class="tab" v-show="currentTab == 0">
@@ -97,7 +98,8 @@
         <div>
           <label>Personal Mission Statement</label>
           <textarea class="input" cols="30" rows="5" oninput="this.className = 'input'"
-          v-model="user.missionStatement" maxlength="250"></textarea>
+          v-model="user.missionStatement" maxlength="250" 
+          placeholder="This should be a short decree which clearly describes your values and goals."></textarea>
         </div>
       </div>
       <div class="tab" id="lastTab" v-show="currentTab == 4">
@@ -134,7 +136,6 @@
           <button class="saveBtn" @click.prevent="register()" v-if="currentTab == 4">Save</button>
           <span class="spacer"></span>
           <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
-          <button class="CancelBtn" @click.prevent="navToLanding()" v-if="currentTab == 0">Cancel</button>
       </div>
       <div class="progressTracker">
         <span class="step"></span>
@@ -275,12 +276,18 @@ export default {
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr;
-  grid-template-areas: "form";
+  grid-template-areas: "back"
+  "form";
   justify-items: center;
   align-items: center;
   background-color: #eff2f1;
   font-family: Arial, Helvetica, sans-serif;
   text-shadow: 0.5px 0.5px gray;
+}
+.back {
+  grid-area: back;
+  align-self: end;
+  margin: 0 175px 10px 0;
 }
 .form-register {
   display: grid;
@@ -301,6 +308,7 @@ export default {
   color: #eff2f1;
   border: 1px #4059ad solid;
   box-shadow: 2px 2px 8px 4px #4059ad;
+  align-self: start;
 }
 
 .tab {

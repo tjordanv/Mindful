@@ -2,7 +2,7 @@
     <nav class="container">
         <p v-if="$route.path == '/goals'">spacerspa</p>
         <router-link class="link" v-if="$route.path != '/goals'" :to="{name: 'goals'}">Goals</router-link>
-        <router-link class="link" :to="{name: 'home'}"><img src="../../pics/picture.png"></router-link>
+        <router-link class="link" :to="{name: 'home'}"><img class="logo" src="../../pics/picture.png"></router-link>
         <router-link class="link" :to="{name: 'logout'}">Logout</router-link>
     </nav>
 </template>
@@ -20,8 +20,8 @@ export default {
   align-items: center;
   background-color: #6b9ac4;
 }
-img {
-    height: 125px;
+.logo {
+    height: 100px;
 }
 .link{
     font-size: 20pt;

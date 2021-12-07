@@ -7,7 +7,7 @@
             <div class="buttons">
                 <button>Add New Score</button>
                 <button>Modify Goal</button>
-                <button>Delete Goal</button>
+                <button v-on:click="endGoal()">End Goal</button>
             </div>
             <h2 class="score">{{currentScore}} / {{goal.goal}}</h2>
             <h2 class="scorePercentage">{{scorePercent}}% Completed</h2>
@@ -84,6 +84,15 @@ export default {
             }
             return "other"
         }
+    },
+    methods: {
+        endGoal() {
+            if(confirm("are you sure?")) {
+                GoalService.terminateGoal(this.goalId);
+                this.$store.commit("INCREMENT_ACTIVE_GOALS", -1)
+                this.$router.push("/goals");
+            }
+        },
     }
 }
 </script>

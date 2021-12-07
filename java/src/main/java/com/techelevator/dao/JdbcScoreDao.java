@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class JdbcScoreDao implements ScoreDao{
+public class JdbcScoreDao implements ScoreDao<Score>{
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -37,6 +37,11 @@ public class JdbcScoreDao implements ScoreDao{
 
         String sql = "INSERT INTO goal_scores (goal_id, date, score, notes) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql, goalId, date, score, notes);
+    }
+
+    @Override
+    public void updateScore(Score score) {
+
     }
 
     private Score mapRowToScore(SqlRowSet rowSet) {

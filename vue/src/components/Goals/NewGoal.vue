@@ -61,7 +61,8 @@
 
 <script>
 import AuthService from "../../services/AuthService.js";
-import GoalService from "../../services/GoalService.js"
+import GoalService from "../../services/GoalService.js";
+import TotalScoreService from "../../services/TotalScoreService.js";
 
 export default {
     data() {
@@ -76,6 +77,11 @@ export default {
                 startDate: "", 
                 endDate: "", 
                 active: ""
+            },
+            totalScore: {
+                goalId: 0,
+                scoreCount: 0,
+                score: 0
             },
             currentDate: "",
             currentTab: 0,
@@ -111,11 +117,13 @@ export default {
                 this.newGoal.active = true;
             }
             // TODO: redirect user to goalDetails page rather than goals page.
-            GoalService.createNewGoal(this.newGoal).then(
-                this.$store.commit("INCREMENT_ACTIVE_GOALS"),
-                this.$router.push("/goals")
-            )
-        }
+            GoalService.createNewGoal(this.newGoal).then((response) => {
+                this.totalScore.goalId = response.data,
+                TotalScoreService.createTotalScore(this.totalScore),
+                this.$store.commit("INCREMENT_ACTIVE_GOALS", 1)
+            }
+            ).finally(this.$router.push("/goals"))
+            }
         }, 
         navToGoals() {
             this.$router.push("/goals");

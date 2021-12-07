@@ -35,6 +35,21 @@ public class User {
       this.activated = true;
    }
 
+   public User(String username, String password, String city, String state, String email,
+               String phone, String firstName, String lastName, Date joinDate,
+               String missionStatement) {
+      this.username = username;
+      this.password = password;
+      this.city = city;
+      this.state = state;
+      this.email = email;
+      this.phone = phone;
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.joinDate = joinDate;
+      this.missionStatement = missionStatement;
+   }
+
    public String getCity() {
       return city;
    }

@@ -2,20 +2,20 @@
   <div class="home">
     <HomeHeader></HomeHeader>
     <Home></Home>
-    <HomeFooter></HomeFooter>
+    <Footer></Footer>
   </div>
 </template>
 
 <script>
 import Home from "../../components/User/Home.vue";
 import HomeHeader from "../../components/Headers/HomeHeader.vue";
-import HomeFooter from "../../components/Footers/HomeFooter.vue"
+import Footer from "../../components/Footers/Footer.vue";
 
 export default {
   components: {
     Home,
     HomeHeader,
-    HomeFooter,
+    Footer,
     }, 
   name: "home",
   data() {
