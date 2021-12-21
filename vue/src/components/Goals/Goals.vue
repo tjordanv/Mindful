@@ -28,7 +28,7 @@
                 <td v-if="goal.units != 'dollars'" v-on:click="goToGoal(goal.goalId)">{{goal.currentScore}}</td>
                 <td v-if="goal.units == 'dollars'" v-on:click="goToGoal(goal.goalId)">$ {{goal.currentScore}}</td>
                 <td v-on:click="goToGoal(goal.goalId)" ><span v-bind:class="{finalDays: goal.finalDays}">{{goal.daysRemaining}}</span></td>
-                <td class="newScoreCell"><button class="newScoreButton" v-on:click="moveTableAndForm(goal), print()">Add Score</button></td>
+                <td class="newScoreCell"><button class="newScoreButton" v-on:click="moveTableAndForm(goal)">Add Score</button></td>
               </tr>
             </tbody>
             <tfoot class="newGoalCell">
@@ -84,17 +84,6 @@ export default {
       moveTable: false,
     }
   },
-  computed: {
-    daysRemaining: function() {
-      let daysArr = [];
-      this.goals.forEach(goal => {
-        let milliseconds = goal.startDate.getTime() - goal.endDate.getTime();
-        milliseconds = milliseconds / (1000 * 60 * 60 * 24);
-        daysArr.push(milliseconds);
-      })
-      return daysArr;
-    }
-  },
   created() {
     // setting current date
     if (this.$store.state.currentDate === "") {
@@ -110,9 +99,6 @@ export default {
 
   },
   methods: {
-    print() {
-      console.log(this.daysRemaining)
-    },
     goToGoal(goalId) {
       this.$router.push(`/goal-details/${goalId}`)
     },
@@ -233,7 +219,7 @@ export default {
 
         // sorting goals by end date or days remaining 
         this.goals.sort((a, b) => {
-          if (a.daysRemaining < b.daysRemaining) {
+          if (a.daysRemaining < b.daysRemaining || a.daysRemaining == "Last Day") {
             return -1;
           } else if (a.daysRemaining > b.daysRemaining) {
             return 1;
