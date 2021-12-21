@@ -1,18 +1,21 @@
 <template>
   <div>
-      <GoalsHeader></GoalsHeader>
+      <HomeHeader></HomeHeader>
       <GoalDetails></GoalDetails>
+      <Footer></Footer>
   </div>
 </template>
 
 <script>
 import GoalDetails from "../../components/Goals/GoalDetails.vue";
-import GoalsHeader from "../../components/Headers/GoalsHeader.vue"
+import HomeHeader from "../../components/Headers/HomeHeader.vue"
+import Footer from "../../components/Footers/Footer.vue"
 
 export default {
     components: {
         GoalDetails,
-        GoalsHeader,
+        HomeHeader,
+        Footer,
     }
 }
 </script>

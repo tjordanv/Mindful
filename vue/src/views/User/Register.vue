@@ -133,7 +133,7 @@
       </div>
       <div class="buttons">
           <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 4">Next</button>
-          <button class="saveBtn" @click.prevent="register()" v-if="currentTab == 4">Save</button>
+          <button class="saveBtn" @click.prevent="register(), print()" v-if="currentTab == 4">Save</button>
           <span class="spacer"></span>
           <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
       </div>

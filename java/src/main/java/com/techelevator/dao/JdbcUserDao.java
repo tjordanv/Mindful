@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.techelevator.model.User;
 
 @Service
-public class JdbcUserDao implements UserDao<User> {
+public class JdbcUserDao implements UserDao {
 
     private JdbcTemplate jdbcTemplate;
 
@@ -29,7 +29,7 @@ public class JdbcUserDao implements UserDao<User> {
 
 	@Override
 	public User getByUsername(String username) {
-		String sql = "SELECT * FROM users WHERE username = ?";
+		String sql = "SELECT * FROM users WHERE username iLike ?";
 		SqlRowSet results = jdbcTemplate.queryForRowSet(sql, username);
 		if(results.next()) {
 			return mapRowToUser(results, false);
@@ -68,7 +68,7 @@ public class JdbcUserDao implements UserDao<User> {
     }
 
     @Override
-    public boolean create(User newUser) {
+    public boolean create(RegisterUserDTO newUser) {
         boolean userCreated = false;
 
         Date date = new Date();

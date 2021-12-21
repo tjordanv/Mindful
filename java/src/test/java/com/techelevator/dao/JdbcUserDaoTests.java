@@ -28,9 +28,8 @@ public class JdbcUserDaoTests extends FinalCapstoneDaoTests {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         String dateStr = formatter.format(date);
 
-        User newUser = new User("TEST_USER", "PASSWORD1", "CITY", "PA",
-                "EMAIL@TEST.COM", "1234567890","FIRST_NAME", "LAST_NAME",
-                date, "MISSION_STATEMENT");
+        RegisterUserDTO newUser = new RegisterUserDTO("firstName", "Lastname", date, "mission statement",
+                "city", "state","email", "2345566", "username", "password", "confpass", "role");
         boolean userCreated = sut.create(newUser);
         Assert.assertTrue(userCreated);
         User user = sut.getByUsername("TEST_USER");

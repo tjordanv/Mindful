@@ -3,6 +3,16 @@
       <router-link class="back" :to="{name: 'goals'}">&lt; Back to Goals Page</router-link>
       <form class="newGoal">
         <h1 class="header">New Goal</h1>
+        <div class="tab" v-show="currentTab == -1">
+            <h2>Tips For Effective Goals</h2>
+            <ul>
+                <li>item</li>
+                <li>item</li>
+                <li>item</li>
+                <li>item</li>
+                <li>item</li>
+            </ul>
+        </div>
         <div class="tab" v-show="currentTab == 0">
             <p>Provide a brief summary of your goal, this should be a concise call to action. 
                 You can also think of this as a title or header!</p>
@@ -49,9 +59,9 @@
         <div class="buttons">
             <button class="NextBtn" @click.prevent="tabNav(1)" v-if="currentTab != 2">Next</button>
             <button class="submitBtn" @click.prevent="createNewGoal()" v-if="currentTab == 2">Save</button>
-            <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab != 0">Back</button>
+            <button class="BackBtn" @click.prevent="tabNav(-1)" v-if="currentTab >= 0 ">Back</button>
         </div>
-        <div class="progressTracker">
+        <div class="progressTracker" v-show="currentTab >= 0">
             <span class="step"></span>
             <span class="step"></span>
             <span class="step"></span>
@@ -85,11 +95,11 @@ export default {
                 score: 0
             },
             currentDate: "",
-            currentTab: 0,
+            currentTab: -1,
         }
     },
     created() {
-        if (this.$store.state.activeGoals == "" ||this.$store.state.activeGoals == 8) {
+        if (this.$store.state.activeGoals === "" || this.$store.state.activeGoals == 8) {
             this.$router.push("/goals");
         }
         if (this.$store.state.userInfo.username === "") {
@@ -103,7 +113,6 @@ export default {
         if (this.$store.state.currentDate === "") {
             this.$store.commit("SET_CURRENT_DATE");
         }
-        
     },
     mounted() {
         let steps = document.getElementsByClassName("progressTracker");
@@ -111,6 +120,10 @@ export default {
     },
     methods: {
         createNewGoal() {
+            // formatting date to avoid the 1 day loss.
+            let date = this.newGoal.endDate.split('-');
+            this.newGoal.endDate = new Date(`${date[1]}-${date[2]}-${date[0]}`)
+            
             if (this.validateForm()) {
                 if (this.newGoal.startDate > this.currentDate) {
                     this.newGoal.active = false;
@@ -130,7 +143,9 @@ export default {
             this.$router.push("/goals");
         },
         tabNav(n) {
-            if (n == 1 && !this.validateForm()) {
+            if (this.currentTab == -1 || (n == -1 && this.currentTab == 0)) {
+                this.currentTab += n;
+            } else if (n == 1 && !this.validateForm()) {
                 return false;
             } else {
                 this.currentTab += n;
@@ -178,12 +193,21 @@ export default {
     justify-items: center;
     align-items: center;
     font-family: Arial, Helvetica, sans-serif;
-
+    text-shadow: 0.5px 0.5px gray;
 }
 .back {
     grid-area: back;
     align-self: end;
     margin: 0 250px 10px 0;
+}
+.back:link {
+  color: #bcf7e5;
+}
+.back:visited {
+  color: #8dbee9;
+}
+.back:hover {
+  color: #4059ad;
 }
 .newGoal {
     width: 400px;
@@ -275,14 +299,5 @@ button {
 }
 button:hover {
     box-shadow: 0px 0px 8px 4px #eff2f1;
-}
-a:link {
-  color: #bcf7e5;
-}
-a:visited {
-  color: #8dbee9;
-}
-a:hover {
-  color: #4059ad;
 }
 </style>

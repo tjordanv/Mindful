@@ -20,7 +20,7 @@ public class JdbcScoreDao implements ScoreDao<Score>{
     public List<Score> getScoresByGoalId(int goalId) {
         List<Score> scores = new ArrayList<>();
         String sql = "SELECT * FROM goal_scores JOIN goals ON goals.goal_id = " +
-                "goal_scores.goal_id WHERE goals.goal_id = ?";
+                "goal_scores.goal_id WHERE goals.goal_id = ? ORDER BY date";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, goalId);
         while (results.next()) {
             scores.add(mapRowToScore(results));
