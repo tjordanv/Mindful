@@ -1,12 +1,15 @@
 <template>
   <div>
-      <h1>COMING SOON</h1>
-      <router-link class="link" :to="{name: 'home'}">Home</router-link>
+      <Reflections></Reflections>
   </div>
 </template>
 
 <script>
+import Reflections from "../../components/Reflections/Reflections.vue"
 export default {
+  components: {
+    Reflections
+  }
 
 }
 </script>
