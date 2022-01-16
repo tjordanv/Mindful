@@ -17,6 +17,11 @@ import 'echarts/lib/component/tooltip';
 import 'echarts/lib/component/grid';
 import 'echarts/lib/component/toolbox';
 
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers' 
+import { BarChart } from 'echarts/charts' 
+import { GridComponent, TooltipComponent } from 'echarts/components' 
+use([ CanvasRenderer, BarChart, GridComponent, TooltipComponent ]); // register globally (or you can do it locally) Vue.component('v-chart', ECharts) new Vue(...) 
 
 library.add(faCalendar, faCheck, faTimes, faEdit, faTasks, faUsers, faAngleUp);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
