@@ -11,7 +11,8 @@
 <script>
 export default {
   name: 'simpleChart',
-  data: () => ({
+  data() {
+    return {
     chartOptionsBar: {
       xAxis: {
         data: ['a', 'b', 'c']
@@ -26,7 +27,8 @@ export default {
         }
       ]
     }
-  })
+    }
+  }
 }
 </script>
 
